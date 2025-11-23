@@ -63,6 +63,36 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 220 25% 8%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 220 25% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 8%;
+
+    --primary: 188 95% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 95% 58%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 188 95% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    --ring: 188 95% 52%;
+  }
+
   .dark {
     --background: 220 25% 8%;
     --foreground: 180 100% 95%;
