@@ -1,72 +1,61 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrendingUp, Target, FileText } from "lucide-react";
 import { motion } from "framer-motion";
-import { Code, Cpu, Shield, Zap } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
 const services = [
   {
-    icon: Cpu,
-    title: "Advanced Processing",
-    description: "Leverage cutting-edge computational power for real-time data processing and analysis.",
+    icon: TrendingUp,
+    title: "SEO Optimization",
+    description: "Boost your visibility on search engines and attract high-quality organic traffic.",
   },
   {
-    icon: Code,
-    title: "Custom Development",
-    description: "Tailored solutions built with modern frameworks and best practices for your unique needs.",
+    icon: Target,
+    title: "PPC Campaign Management",
+    description: "Maximize your ROI with targeted, data-driven advertising campaigns that convert.",
   },
   {
-    icon: Shield,
-    title: "Enterprise Security",
-    description: "Military-grade encryption and security protocols to protect your critical data.",
-  },
-  {
-    icon: Zap,
-    title: "High Performance",
-    description: "Optimized infrastructure delivering lightning-fast response times and reliability.",
+    icon: FileText,
+    title: "Content Strategy",
+    description: "Engage your audience with compelling, relatable content that builds trust and drives action.",
   },
 ];
 
 const Services = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
-        }} />
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
+    <section id="services" className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Our Services
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Comprehensive solutions designed to power your digital transformation
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">What We Offer</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            We provide a comprehensive suite of services to meet your marketing needs, from strategy to execution.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card className="p-6 bg-card border-border hover:border-primary/50 transition-all duration-300 group hover:shadow-[0_0_30px_hsl(var(--primary)/0.2)] h-full">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-foreground">{service.title}</h3>
-                <p className="text-muted-foreground">{service.description}</p>
+              <Card className="h-full hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <service.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">{service.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base">{service.description}</CardDescription>
+                </CardContent>
               </Card>
             </motion.div>
           ))}
