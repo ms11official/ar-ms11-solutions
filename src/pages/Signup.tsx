@@ -44,31 +44,42 @@ const Signup = () => {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          full_name: fullName,
-        },
-      },
-    });
+    try {
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Send OTP via email
+      const { error: emailError } = await supabase.functions.invoke("send-otp", {
+        body: { email, otp, fullName },
+      });
 
-    setLoading(false);
+      setLoading(false);
 
-    if (error) {
+      if (emailError) {
+        toast({
+          title: "Error",
+          description: "Failed to send OTP. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "OTP Sent",
+        description: "Please check your email for the verification code.",
+      });
+
+      // Navigate to OTP verification page
+      navigate("/verify-otp", {
+        state: { email, password, fullName, storedOtp: otp },
+      });
+    } catch (error) {
+      setLoading(false);
       toast({
         title: "Error",
-        description: error.message,
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Account created successfully! Please check your email to verify your account.",
-      });
-      navigate("/");
     }
   };
 
