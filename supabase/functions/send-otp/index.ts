@@ -22,12 +22,17 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending OTP to:", email);
 
     const smtpHost = Deno.env.get("SMTP_HOST");
-    const smtpPort = parseInt(Deno.env.get("SMTP_PORT") || "587");
+    const smtpPortEnv = Deno.env.get("SMTP_PORT");
+    const smtpPort = smtpPortEnv ? parseInt(smtpPortEnv, 10) : 587;
     const smtpUser = Deno.env.get("SMTP_USER");
     const smtpPassword = Deno.env.get("SMTP_PASSWORD");
 
     if (!smtpHost || !smtpUser || !smtpPassword) {
       throw new Error("SMTP configuration missing");
+    }
+
+    if (isNaN(smtpPort)) {
+      throw new Error("Invalid SMTP_PORT value - must be a number");
     }
 
     // Create email message
