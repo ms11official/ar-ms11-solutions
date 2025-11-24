@@ -39,8 +39,11 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('tools')} className="text-sm font-medium hover:text-primary transition-colors">
                 Tools
               </button>
-              <Button onClick={() => scrollToSection('contact')} className="rounded-lg">
-                Contact Us
+              <Button onClick={() => window.location.href = '/signup'} className="rounded-lg">
+                Get Started
+              </Button>
+              <Button onClick={() => window.location.href = '/login'} variant="outline" className="rounded-lg">
+                Login
               </Button>
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
