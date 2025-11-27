@@ -10,6 +10,13 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import VerifyOTP from "./pages/VerifyOTP";
 import Dashboard from "./pages/Dashboard";
+import MyProfile from "./pages/MyProfile";
+import ServicesPage from "./pages/Services";
+import ToolsPage from "./pages/ToolsPage";
+import ActivityHistory from "./pages/ActivityHistory";
+import SettingsPage from "./pages/SettingsPage";
+import Notifications from "./pages/Notifications";
+import UpgradePlan from "./pages/UpgradePlan";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +33,13 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/verify-otp" element={<VerifyOTP />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<MyProfile />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/tools" element={<ToolsPage />} />
+            <Route path="/activity" element={<ActivityHistory />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/upgrade" element={<UpgradePlan />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
