@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import VerifyOTP from "./pages/VerifyOTP";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
 import ToolsPage from "./pages/ToolsPage";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/verify-otp" element={<VerifyOTP />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/tools" element={<ToolsPage />} />
