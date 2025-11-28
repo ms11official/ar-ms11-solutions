@@ -10,21 +10,82 @@ import { useToast } from "@/hooks/use-toast";
 const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { email, password, fullName, storedOtp } = location.state || {};
+  const [currentStoredOtp, setCurrentStoredOtp] = useState(location.state?.storedOtp || "");
+  const { email, password, fullName } = location.state || {};
 
   useEffect(() => {
-    if (!email || !storedOtp) {
+    if (!email || !currentStoredOtp) {
       navigate("/signup");
     }
-  }, [email, storedOtp, navigate]);
+  }, [email, currentStoredOtp, navigate]);
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setCanResend(true);
+    }
+  }, [timer]);
+
+  const handleResendOTP = async () => {
+    setResendLoading(true);
+    
+    // Generate new OTP
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            email,
+            otp: newOtp,
+            fullName,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        setCurrentStoredOtp(newOtp);
+        setTimer(60);
+        setCanResend(false);
+        setOtp("");
+        toast({
+          title: "Success",
+          description: "New OTP sent to your email!",
+        });
+      } else {
+        throw new Error("Failed to send OTP");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to resend OTP. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (otp !== storedOtp) {
+    if (otp !== currentStoredOtp) {
       toast({
         title: "Error",
         description: "Invalid OTP. Please try again.",
@@ -121,10 +182,11 @@ const VerifyOTP = () => {
               <span className="text-muted-foreground">Didn't receive code? </span>
               <button
                 type="button"
-                onClick={() => navigate("/signup")}
-                className="text-primary hover:underline font-medium"
+                onClick={handleResendOTP}
+                disabled={!canResend || resendLoading}
+                className="text-primary hover:underline font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Resend OTP
+                {resendLoading ? "Sending..." : canResend ? "Resend OTP" : `Resend in ${timer}s`}
               </button>
             </div>
           </form>
