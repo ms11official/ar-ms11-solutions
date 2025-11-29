@@ -12,8 +12,13 @@ import {
   Settings,
   LogOut,
   Bell,
+  Shield,
+  Users,
+  FileText,
+  BarChart3,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,6 +31,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -67,7 +73,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -87,6 +93,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/tools", icon: Wrench, label: "Tools" },
     { path: "/activity", icon: History, label: "Activity History" },
     { path: "/settings", icon: Settings, label: "Settings" },
+  ];
+
+  const adminNavItems = [
+    { path: "/admin", icon: Shield, label: "Admin Dashboard" },
+    { path: "/admin/users", icon: Users, label: "User Management" },
+    { path: "/admin/logs", icon: FileText, label: "System Logs" },
+    { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   ];
 
   return (
@@ -144,6 +157,33 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 {!sidebarCollapsed && <span className="text-sm font-medium">{item.label}</span>}
               </Link>
             ))}
+
+            {isAdmin && (
+              <>
+                {!sidebarCollapsed && (
+                  <div className="px-3 py-2 mt-4">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Admin
+                    </p>
+                  </div>
+                )}
+                {adminNavItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
+                      isActive(item.path)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                    title={sidebarCollapsed ? item.label : undefined}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    {!sidebarCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                  </Link>
+                ))}
+              </>
+            )}
           </div>
         </nav>
 
