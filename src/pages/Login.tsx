@@ -36,19 +36,26 @@ const Login = () => {
     }
 
     if (data.user) {
-      // Check if user is admin
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .single();
-
-      setLoading(false);
-
       toast({
         title: "Success",
         description: "Logged in successfully!",
       });
+
+      // Wait a moment for the trigger to assign the role
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Check if user is admin
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+
+      if (roleError) {
+        console.error('Error fetching role:', roleError);
+      }
+
+      setLoading(false);
 
       // Redirect based on role
       if (roleData?.role === 'admin') {
