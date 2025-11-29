@@ -22,6 +22,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -91,17 +92,39 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card flex flex-col p-4">
-        <div className="flex items-center gap-3 px-3 py-4">
-          <div className="w-6 h-6">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
-                fill="currentColor"
-              />
-            </svg>
+      <aside className={`${sidebarCollapsed ? 'w-20' : 'w-64'} border-r border-border bg-card flex flex-col p-4 transition-all duration-300`}>
+        <div className="flex items-center justify-between px-3 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6">
+              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+            {!sidebarCollapsed && <h2 className="text-xl font-bold">AR-MS11</h2>}
           </div>
-          <h2 className="text-xl font-bold">AR-MS11</h2>
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-1 hover:bg-accent rounded-lg transition-colors"
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`}
+            >
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
         </div>
 
         <nav className="flex-1 pt-4">
@@ -114,10 +137,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   isActive(item.path)
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                }`}
+                } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                title={sidebarCollapsed ? item.label : undefined}
               >
                 <item.icon className="w-5 h-5" />
-                <span className="text-sm font-medium">{item.label}</span>
+                {!sidebarCollapsed && <span className="text-sm font-medium">{item.label}</span>}
               </Link>
             ))}
           </div>
@@ -125,10 +149,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground ${sidebarCollapsed ? 'justify-center' : ''}`}
+          title={sidebarCollapsed ? "Logout" : undefined}
         >
           <LogOut className="w-5 h-5" />
-          <span className="text-sm font-medium">Logout</span>
+          {!sidebarCollapsed && <span className="text-sm font-medium">Logout</span>}
         </button>
       </aside>
 
