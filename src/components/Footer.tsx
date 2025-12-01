@@ -32,22 +32,22 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/careers" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Careers
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Contact Us
                 </a>
               </li>
@@ -58,12 +58,12 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Terms of Service
                 </a>
               </li>
