@@ -87,7 +87,12 @@ const Signup = () => {
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1a2332]">
-        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white">
+        <img 
+          src={signupBg} 
+          alt="Marketing Analytics" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white bg-[#1a2332]/60">
           <h2 className="text-2xl font-bold mb-4">AR-MS11</h2>
           <h1 className="text-5xl font-bold mb-6 leading-tight">
             Unlock Your Marketing<br />Potential
@@ -97,11 +102,6 @@ const Signup = () => {
             cutting-edge marketing analytics platform.
           </p>
         </div>
-        <img 
-          src={signupBg} 
-          alt="Marketing Analytics" 
-          className="w-full h-full object-cover opacity-60"
-        />
       </div>
 
       {/* Right Side - Form */}

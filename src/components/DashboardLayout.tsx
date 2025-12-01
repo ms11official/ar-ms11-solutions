@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
+import { CommandPalette } from "./CommandPalette";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,6 +34,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const { toast } = useToast();
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
+  useKeyboardShortcuts();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -104,6 +107,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className="flex min-h-screen bg-background">
+      <CommandPalette />
       {/* Sidebar */}
       <aside className={`${sidebarCollapsed ? 'w-20' : 'w-64'} border-r border-border bg-card flex flex-col p-4 transition-all duration-300`}>
         <div className="flex items-center justify-between px-3 py-4">
