@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import signupBg from "@/assets/signup-bg.png";
+import authBg from "@/assets/auth-bg.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -71,13 +71,13 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#1a2332]">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#0f1419]">
         <img 
-          src={signupBg} 
-          alt="Marketing Analytics" 
-          className="w-full h-full object-cover"
+          src={authBg} 
+          alt="Marketing Analytics Dashboard" 
+          className="w-full h-full object-cover opacity-90"
         />
-        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white bg-[#1a2332]/60">
+        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white bg-gradient-to-r from-[#0f1419] via-[#0f1419]/80 to-transparent">
           <h2 className="text-2xl font-bold mb-4">AR-MS11</h2>
           <h1 className="text-5xl font-bold mb-6 leading-tight">
             Unlock Your Marketing<br />Potential

@@ -21,6 +21,12 @@ import ActivityHistory from "./pages/ActivityHistory";
 import SettingsPage from "./pages/SettingsPage";
 import Notifications from "./pages/Notifications";
 import UpgradePlan from "./pages/UpgradePlan";
+import AboutUs from "./pages/AboutUs";
+import Careers from "./pages/Careers";
+import Blog from "./pages/Blog";
+import ContactUs from "./pages/ContactUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +54,12 @@ const App = () => (
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/upgrade" element={<UpgradePlan />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
