@@ -14,6 +14,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminLogs from "./pages/AdminLogs";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminToolsUpload from "./pages/AdminToolsUpload";
+import AdminServicesUpload from "./pages/AdminServicesUpload";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
 import ToolsPage from "./pages/ToolsPage";
@@ -47,6 +49,8 @@ const App = () => (
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/logs" element={<AdminLogs />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/tools-upload" element={<AdminToolsUpload />} />
+            <Route path="/admin/services-upload" element={<AdminServicesUpload />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/tools" element={<ToolsPage />} />
