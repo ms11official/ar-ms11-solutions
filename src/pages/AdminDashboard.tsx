@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,9 @@ import {
   Shield,
   Database,
   Activity,
+  Wrench,
+  Layers,
+  Upload,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -129,27 +132,66 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
+        {/* Upload Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Link to="/admin/tools-upload">
+            <Card className="p-6 hover:border-primary/50 transition-colors cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Wrench className="w-7 h-7 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold">Tools Upload</h3>
+                  <p className="text-sm text-muted-foreground">Add and manage tools</p>
+                </div>
+                <Upload className="w-5 h-5 text-muted-foreground" />
+              </div>
+            </Card>
+          </Link>
+
+          <Link to="/admin/services-upload">
+            <Card className="p-6 hover:border-primary/50 transition-colors cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <Layers className="w-7 h-7 text-green-500" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold">Services Upload</h3>
+                  <p className="text-sm text-muted-foreground">Add and manage services</p>
+                </div>
+                <Upload className="w-5 h-5 text-muted-foreground" />
+              </div>
+            </Card>
+          </Link>
+        </div>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <Card className="p-6">
             <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="w-4 h-4 mr-2" />
-                Manage Users
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Settings className="w-4 h-4 mr-2" />
-                System Settings
-              </Button>
+              <Link to="/admin/users">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="w-4 h-4 mr-2" />
+                  Manage Users
+                </Button>
+              </Link>
+              <Link to="/settings">
+                <Button variant="outline" className="w-full justify-start">
+                  <Settings className="w-4 h-4 mr-2" />
+                  System Settings
+                </Button>
+              </Link>
               <Button variant="outline" className="w-full justify-start">
                 <Database className="w-4 h-4 mr-2" />
                 Database Management
               </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                View Analytics
-              </Button>
+              <Link to="/admin/analytics">
+                <Button variant="outline" className="w-full justify-start">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  View Analytics
+                </Button>
+              </Link>
             </div>
           </Card>
 

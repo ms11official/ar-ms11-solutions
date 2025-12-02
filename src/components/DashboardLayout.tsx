@@ -103,6 +103,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/admin/users", icon: Users, label: "User Management" },
     { path: "/admin/logs", icon: FileText, label: "System Logs" },
     { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
+    { path: "/admin/tools-upload", icon: Wrench, label: "Tools Upload" },
+    { path: "/admin/services-upload", icon: Layers, label: "Services Upload" },
   ];
 
   return (
