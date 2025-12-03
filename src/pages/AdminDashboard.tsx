@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
@@ -32,37 +32,23 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [toolsCount, setToolsCount] = useState(0);
   const [servicesCount, setServicesCount] = useState(0);
-  const navigate = useNavigate();
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setUser(session.user);
-      } else {
-        navigate("/login");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
       }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser(session.user);
-      } else {
-        navigate("/login");
-      }
-    });
-
     return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!loading && !roleLoading && !isAdmin) {
-      navigate("/dashboard");
-    }
-  }, [loading, roleLoading, isAdmin, navigate]);
+  }, []);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -73,8 +59,8 @@ const AdminDashboard = () => {
       setToolsCount(toolsRes.count || 0);
       setServicesCount(servicesRes.count || 0);
     };
-    if (isAdmin) fetchCounts();
-  }, [isAdmin]);
+    if (!loading && !roleLoading && isAdmin) fetchCounts();
+  }, [loading, roleLoading, isAdmin]);
 
   if (loading || roleLoading) {
     return (
@@ -84,10 +70,6 @@ const AdminDashboard = () => {
         </div>
       </DashboardLayout>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
 
   const currentHour = new Date().getHours();

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -37,43 +36,29 @@ const AdminLogs = () => {
   const [dbLogs, setDbLogs] = useState<LogEntry[]>([]);
   const [edgeLogs, setEdgeLogs] = useState<LogEntry[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const navigate = useNavigate();
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setUser(session.user);
-      } else {
-        navigate("/login");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
       }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser(session.user);
-      } else {
-        navigate("/login");
-      }
-    });
-
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
-    if (!loading && !roleLoading && !isAdmin) {
-      navigate("/dashboard");
-    }
-  }, [loading, roleLoading, isAdmin, navigate]);
-
-  useEffect(() => {
-    if (isAdmin) {
+    if (!loading && !roleLoading && user && isAdmin) {
       fetchLogs();
     }
-  }, [isAdmin]);
+  }, [loading, roleLoading, user, isAdmin]);
 
   const fetchLogs = async () => {
     setRefreshing(true);
@@ -138,10 +123,6 @@ const AdminLogs = () => {
         </div>
       </DashboardLayout>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
 
   return (
