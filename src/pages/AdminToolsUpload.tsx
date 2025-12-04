@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wrench, Upload, Plus, Trash2, Edit, Image } from "lucide-react";
+import { Wrench, Upload, Plus, Trash2, Edit, Image, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Tool {
@@ -19,14 +19,21 @@ interface Tool {
   category: string;
   icon: string | null;
   image_url: string | null;
+  link: string | null;
   status: string;
   created_at: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
 }
 
 const AdminToolsUpload = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [tools, setTools] = useState<Tool[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
   const { toast } = useToast();
@@ -35,6 +42,7 @@ const AdminToolsUpload = () => {
   const [toolDescription, setToolDescription] = useState("");
   const [toolIcon, setToolIcon] = useState("");
   const [toolCategory, setToolCategory] = useState("");
+  const [toolLink, setToolLink] = useState("");
   const [toolStatus, setToolStatus] = useState("draft");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -58,6 +66,7 @@ const AdminToolsUpload = () => {
   useEffect(() => {
     if (!loading && !roleLoading && user && isAdmin) {
       fetchTools();
+      fetchCategories();
     }
   }, [loading, roleLoading, user, isAdmin]);
 
@@ -71,6 +80,20 @@ const AdminToolsUpload = () => {
       console.error("Error fetching tools:", error);
     } else {
       setTools(data || []);
+    }
+  };
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id, name")
+      .eq("type", "tool")
+      .order("name");
+
+    if (error) {
+      console.error("Error fetching categories:", error);
+    } else {
+      setCategories(data || []);
     }
   };
 
@@ -92,6 +115,41 @@ const AdminToolsUpload = () => {
     return data.publicUrl;
   };
 
+  const sendNotificationsToAllUsers = async (toolName: string) => {
+    try {
+      // Get all users from user_roles
+      const { data: userRoles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id");
+
+      if (rolesError) {
+        console.error("Error fetching users:", rolesError);
+        return;
+      }
+
+      // Create notifications for all users
+      const notifications = userRoles?.map((role) => ({
+        user_id: role.user_id,
+        title: "New Tool Added!",
+        message: `A new tool "${toolName}" has been added. Check it out!`,
+        type: "info",
+        link: "/tools",
+      })) || [];
+
+      if (notifications.length > 0) {
+        const { error: notifError } = await supabase
+          .from("notifications")
+          .insert(notifications);
+
+        if (notifError) {
+          console.error("Error sending notifications:", notifError);
+        }
+      }
+    } catch (error) {
+      console.error("Error in sendNotificationsToAllUsers:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -108,6 +166,7 @@ const AdminToolsUpload = () => {
           description: toolDescription,
           category: toolCategory,
           icon: toolIcon,
+          link: toolLink || null,
           status: toolStatus,
         };
         if (imageUrl) updateData.image_url = imageUrl;
@@ -125,12 +184,19 @@ const AdminToolsUpload = () => {
           description: toolDescription,
           category: toolCategory,
           icon: toolIcon,
+          link: toolLink || null,
           image_url: imageUrl,
           status: toolStatus,
           created_by: user?.id,
         });
 
         if (error) throw error;
+        
+        // Send notifications to all users for new active tools
+        if (toolStatus === "active") {
+          await sendNotificationsToAllUsers(toolName);
+        }
+        
         toast({ title: "Success", description: "Tool added successfully" });
       }
 
@@ -153,6 +219,7 @@ const AdminToolsUpload = () => {
     setToolDescription("");
     setToolIcon("");
     setToolCategory("");
+    setToolLink("");
     setToolStatus("draft");
     setImageFile(null);
     setEditingId(null);
@@ -164,6 +231,7 @@ const AdminToolsUpload = () => {
     setToolDescription(tool.description || "");
     setToolIcon(tool.icon || "");
     setToolCategory(tool.category);
+    setToolLink(tool.link || "");
     setToolStatus(tool.status);
   };
 
@@ -223,13 +291,28 @@ const AdminToolsUpload = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="toolCategory">Category</Label>
-                <Input
-                  id="toolCategory"
-                  value={toolCategory}
-                  onChange={(e) => setToolCategory(e.target.value)}
-                  placeholder="e.g., Image Tools, Text Tools"
-                  required
-                />
+                {categories.length > 0 ? (
+                  <Select value={toolCategory} onValueChange={setToolCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id="toolCategory"
+                    value={toolCategory}
+                    onChange={(e) => setToolCategory(e.target.value)}
+                    placeholder="e.g., Image Tools, Text Tools"
+                    required
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -240,6 +323,23 @@ const AdminToolsUpload = () => {
                   onChange={(e) => setToolIcon(e.target.value)}
                   placeholder="e.g., Image, FileText, Code"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="toolLink">External Link (Optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="toolLink"
+                    value={toolLink}
+                    onChange={(e) => setToolLink(e.target.value)}
+                    placeholder="https://example.com/tool"
+                    type="url"
+                  />
+                  <LinkIcon className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  If provided, users will see a "Visit" button
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -316,7 +416,10 @@ const AdminToolsUpload = () => {
                         />
                       )}
                       <div>
-                        <p className="font-medium">{tool.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{tool.name}</p>
+                          {tool.link && <LinkIcon className="w-3 h-3 text-primary" />}
+                        </div>
                         <p className="text-sm text-muted-foreground">{tool.category}</p>
                       </div>
                     </div>

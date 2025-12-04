@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           created_at: string
@@ -22,6 +82,7 @@ export type Database = {
           features: string[] | null
           id: string
           image_url: string | null
+          link: string | null
           name: string
           price: string
           status: string
@@ -34,6 +95,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image_url?: string | null
+          link?: string | null
           name: string
           price: string
           status?: string
@@ -46,6 +108,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image_url?: string | null
+          link?: string | null
           name?: string
           price?: string
           status?: string
@@ -62,6 +125,7 @@ export type Database = {
           icon: string | null
           id: string
           image_url: string | null
+          link: string | null
           name: string
           status: string
           updated_at: string
@@ -74,6 +138,7 @@ export type Database = {
           icon?: string | null
           id?: string
           image_url?: string | null
+          link?: string | null
           name: string
           status?: string
           updated_at?: string
@@ -86,6 +151,7 @@ export type Database = {
           icon?: string | null
           id?: string
           image_url?: string | null
+          link?: string | null
           name?: string
           status?: string
           updated_at?: string

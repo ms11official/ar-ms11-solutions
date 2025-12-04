@@ -1,140 +1,87 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Search,
-  BarChart3,
-  Megaphone,
-  Mail,
-  FileText,
-  Image,
-  Globe,
-  TrendingUp,
-  Target,
-  Zap,
-  Calendar,
-  Users,
-} from "lucide-react";
+import { Search, Wrench, ExternalLink } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-const toolsData = [
-  {
-    id: 1,
-    name: "Keyword Analyzer",
-    description: "Analyze keyword performance and find new opportunities.",
-    icon: BarChart3,
-    category: "SEO",
-    usageCount: 45,
-  },
-  {
-    id: 2,
-    name: "Ad Campaign Builder",
-    description: "Create and manage advertising campaigns across platforms.",
-    icon: Megaphone,
-    category: "Advertising",
-    usageCount: 32,
-  },
-  {
-    id: 3,
-    name: "Email Automation",
-    description: "Set up automated email sequences and workflows.",
-    icon: Mail,
-    category: "Email",
-    usageCount: 67,
-  },
-  {
-    id: 4,
-    name: "Content Generator",
-    description: "Generate engaging content for your marketing campaigns.",
-    icon: FileText,
-    category: "Content",
-    usageCount: 28,
-  },
-  {
-    id: 5,
-    name: "Social Media Scheduler",
-    description: "Schedule and publish posts across all social platforms.",
-    icon: Calendar,
-    category: "Social Media",
-    usageCount: 54,
-  },
-  {
-    id: 6,
-    name: "Image Editor",
-    description: "Edit and optimize images for your campaigns.",
-    icon: Image,
-    category: "Design",
-    usageCount: 41,
-  },
-  {
-    id: 7,
-    name: "Website Analyzer",
-    description: "Analyze website performance and get optimization tips.",
-    icon: Globe,
-    category: "Analytics",
-    usageCount: 23,
-  },
-  {
-    id: 8,
-    name: "Competitor Research",
-    description: "Track and analyze competitor marketing strategies.",
-    icon: Target,
-    category: "Research",
-    usageCount: 19,
-  },
-  {
-    id: 9,
-    name: "SEO Optimizer",
-    description: "Optimize your content for better search rankings.",
-    icon: TrendingUp,
-    category: "SEO",
-    usageCount: 56,
-  },
-  {
-    id: 10,
-    name: "Automation Builder",
-    description: "Build custom marketing automation workflows.",
-    icon: Zap,
-    category: "Automation",
-    usageCount: 38,
-  },
-  {
-    id: 11,
-    name: "Audience Segmentation",
-    description: "Segment your audience for targeted campaigns.",
-    icon: Users,
-    category: "Analytics",
-    usageCount: 31,
-  },
-  {
-    id: 12,
-    name: "Landing Page Builder",
-    description: "Create high-converting landing pages without coding.",
-    icon: Globe,
-    category: "Design",
-    usageCount: 44,
-  },
-];
+interface Tool {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string;
+  icon: string | null;
+  image_url: string | null;
+  link: string | null;
+  status: string;
+  created_at: string;
+}
 
 const ToolsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const categories = Array.from(new Set(toolsData.map((tool) => tool.category)));
+  useEffect(() => {
+    fetchTools();
+  }, []);
 
-  const filteredTools = toolsData.filter((tool) => {
+  const fetchTools = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("tools")
+      .select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching tools:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch tools",
+        variant: "destructive",
+      });
+    } else {
+      setTools(data || []);
+    }
+    setLoading(false);
+  };
+
+  const categories = Array.from(new Set(tools.map((tool) => tool.category)));
+
+  const filteredTools = tools.filter((tool) => {
     const matchesSearch =
       tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (tool.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
     const matchesCategory = !selectedCategory || tool.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const totalUsage = toolsData.reduce((sum, tool) => sum + tool.usageCount, 0);
+  const handleLaunch = (tool: Tool) => {
+    if (tool.link) {
+      window.open(tool.link, "_blank");
+    } else {
+      toast({
+        title: "Tool Launched",
+        description: `Opening ${tool.name}...`,
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full p-10">
+          <div className="text-lg">Loading tools...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -151,16 +98,8 @@ const ToolsPage = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-3xl font-bold">{toolsData.length}</p>
+                <p className="text-3xl font-bold">{tools.length}</p>
                 <p className="text-sm text-muted-foreground">Total Tools</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold">{totalUsage}</p>
-                <p className="text-sm text-muted-foreground">Total Uses</p>
               </div>
             </CardContent>
           </Card>
@@ -175,8 +114,16 @@ const ToolsPage = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-3xl font-bold">5</p>
-                <p className="text-sm text-muted-foreground">Active Today</p>
+                <p className="text-3xl font-bold">{filteredTools.length}</p>
+                <p className="text-sm text-muted-foreground">Showing</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-3xl font-bold">{tools.filter(t => t.link).length}</p>
+                <p className="text-sm text-muted-foreground">With Links</p>
               </div>
             </CardContent>
           </Card>
@@ -221,34 +168,38 @@ const ToolsPage = () => {
             <Card key={tool.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <tool.icon className="w-6 h-6 text-primary" />
-                  </div>
+                  {tool.image_url ? (
+                    <img
+                      src={tool.image_url}
+                      alt={tool.name}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Wrench className="w-6 h-6 text-primary" />
+                    </div>
+                  )}
                   <Badge variant="secondary">{tool.category}</Badge>
                 </div>
                 <CardTitle className="text-xl">{tool.name}</CardTitle>
                 <CardDescription>{tool.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">
-                      {tool.usageCount}
-                    </span>{" "}
-                    uses
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    className="flex-1"
+                    onClick={() => handleLaunch(tool)}
+                  >
+                    {tool.link ? (
+                      <>
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Visit Tool
+                      </>
+                    ) : (
+                      "Launch Tool"
+                    )}
+                  </Button>
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={() =>
-                    toast({
-                      title: "Tool Launched",
-                      description: `Opening ${tool.name}...`,
-                    })
-                  }
-                >
-                  Launch Tool
-                </Button>
               </CardContent>
             </Card>
           ))}
@@ -256,6 +207,7 @@ const ToolsPage = () => {
 
         {filteredTools.length === 0 && (
           <div className="text-center py-12">
+            <Wrench className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-lg text-muted-foreground">No tools found matching your criteria</p>
           </div>
         )}

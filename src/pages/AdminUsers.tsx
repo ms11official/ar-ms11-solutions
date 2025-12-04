@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useUserRole } from "@/hooks/useUserRole";
 import { Card } from "@/components/ui/card";
-import { Users, Trash2, Edit } from "lucide-react";
+import { Users, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -13,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -36,9 +35,9 @@ import { useToast } from "@/hooks/use-toast";
 
 interface UserData {
   id: string;
-  email: string;
+  user_id: string;
+  role: string;
   created_at: string;
-  role: string | null;
 }
 
 const AdminUsers = () => {
@@ -73,29 +72,15 @@ const AdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Fetch all users from auth.users via admin API
-      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
-
-      if (authError) throw authError;
-
-      // Fetch roles for all users
+      // Fetch all users from user_roles table
       const { data: rolesData, error: rolesError } = await supabase
         .from("user_roles")
-        .select("user_id, role");
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (rolesError) throw rolesError;
 
-      // Combine user data with roles
-      const rolesMap = new Map(rolesData?.map((r) => [r.user_id, r.role]) || []);
-      
-      const usersWithRoles = authUsers.map((authUser) => ({
-        id: authUser.id,
-        email: authUser.email || "",
-        created_at: authUser.created_at,
-        role: rolesMap.get(authUser.id) || null,
-      }));
-
-      setUsers(usersWithRoles);
+      setUsers(rolesData || []);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({
@@ -108,29 +93,12 @@ const AdminUsers = () => {
 
   const handleRoleChange = async (userId: string, newRole: "admin" | "moderator" | "user") => {
     try {
-      // Check if user already has a role
-      const { data: existingRole } = await supabase
+      const { error } = await supabase
         .from("user_roles")
-        .select("id")
-        .eq("user_id", userId)
-        .maybeSingle();
+        .update({ role: newRole })
+        .eq("user_id", userId);
 
-      if (existingRole) {
-        // Update existing role
-        const { error } = await supabase
-          .from("user_roles")
-          .update({ role: newRole })
-          .eq("user_id", userId);
-
-        if (error) throw error;
-      } else {
-        // Insert new role
-        const { error } = await supabase
-          .from("user_roles")
-          .insert([{ user_id: userId, role: newRole }]);
-
-        if (error) throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
@@ -152,13 +120,17 @@ const AdminUsers = () => {
     if (!deleteUserId) return;
 
     try {
-      const { error } = await supabase.auth.admin.deleteUser(deleteUserId);
+      // Delete from user_roles table
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", deleteUserId);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "User deleted successfully",
+        description: "User role deleted successfully",
       });
 
       setDeleteUserId(null);
@@ -192,56 +164,68 @@ const AdminUsers = () => {
             <h1 className="text-4xl font-black">User Management</h1>
           </div>
           <p className="text-base text-muted-foreground">
-            Manage users, roles, and permissions
+            Manage users and their roles
           </p>
         </div>
 
         <Card className="p-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((userData) => (
-                <TableRow key={userData.id}>
-                  <TableCell className="font-medium">{userData.email}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={userData.role || "user"}
-                      onValueChange={(value) => handleRoleChange(userData.id, value as "admin" | "moderator" | "user")}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="moderator">Moderator</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(userData.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setDeleteUserId(userData.id)}
-                      disabled={userData.email === "ms11official9@gmail.com"}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </TableCell>
+          {users.length === 0 ? (
+            <div className="text-center py-12">
+              <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-lg text-muted-foreground">No users found</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Users will appear here once they sign up and get assigned roles
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User ID</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {users.map((userData) => (
+                  <TableRow key={userData.id}>
+                    <TableCell className="font-mono text-sm">
+                      {userData.user_id.slice(0, 8)}...
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={userData.role}
+                        onValueChange={(value) => handleRoleChange(userData.user_id, value as "admin" | "moderator" | "user")}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="moderator">Moderator</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      {userData.created_at ? new Date(userData.created_at).toLocaleDateString() : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteUserId(userData.user_id)}
+                        disabled={userData.role === "admin"}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Card>
 
         <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
@@ -249,8 +233,7 @@ const AdminUsers = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the user
-                account and all associated data.
+                This will remove the user's role. They will lose access to role-specific features.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

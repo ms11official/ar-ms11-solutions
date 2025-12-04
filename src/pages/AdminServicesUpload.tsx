@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Layers, Upload, Plus, Trash2, Edit, Image } from "lucide-react";
+import { Layers, Upload, Plus, Trash2, Edit, Image, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Service {
@@ -19,14 +19,21 @@ interface Service {
   price: string;
   features: string[] | null;
   image_url: string | null;
+  link: string | null;
   status: string;
   created_at: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
 }
 
 const AdminServicesUpload = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [services, setServices] = useState<Service[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
   const { toast } = useToast();
@@ -35,6 +42,7 @@ const AdminServicesUpload = () => {
   const [serviceDescription, setServiceDescription] = useState("");
   const [servicePrice, setServicePrice] = useState("");
   const [serviceFeatures, setServiceFeatures] = useState("");
+  const [serviceLink, setServiceLink] = useState("");
   const [serviceStatus, setServiceStatus] = useState("draft");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -58,6 +66,7 @@ const AdminServicesUpload = () => {
   useEffect(() => {
     if (!loading && !roleLoading && user && isAdmin) {
       fetchServices();
+      fetchCategories();
     }
   }, [loading, roleLoading, user, isAdmin]);
 
@@ -71,6 +80,20 @@ const AdminServicesUpload = () => {
       console.error("Error fetching services:", error);
     } else {
       setServices(data || []);
+    }
+  };
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from("categories")
+      .select("id, name")
+      .eq("type", "service")
+      .order("name");
+
+    if (error) {
+      console.error("Error fetching categories:", error);
+    } else {
+      setCategories(data || []);
     }
   };
 
@@ -90,6 +113,41 @@ const AdminServicesUpload = () => {
 
     const { data } = supabase.storage.from("services-images").getPublicUrl(filePath);
     return data.publicUrl;
+  };
+
+  const sendNotificationsToAllUsers = async (serviceName: string) => {
+    try {
+      // Get all users from user_roles
+      const { data: userRoles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id");
+
+      if (rolesError) {
+        console.error("Error fetching users:", rolesError);
+        return;
+      }
+
+      // Create notifications for all users
+      const notifications = userRoles?.map((role) => ({
+        user_id: role.user_id,
+        title: "New Service Available!",
+        message: `A new service "${serviceName}" has been added. Check it out!`,
+        type: "info",
+        link: "/services",
+      })) || [];
+
+      if (notifications.length > 0) {
+        const { error: notifError } = await supabase
+          .from("notifications")
+          .insert(notifications);
+
+        if (notifError) {
+          console.error("Error sending notifications:", notifError);
+        }
+      }
+    } catch (error) {
+      console.error("Error in sendNotificationsToAllUsers:", error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,6 +171,7 @@ const AdminServicesUpload = () => {
           description: serviceDescription,
           price: servicePrice,
           features: featuresArray,
+          link: serviceLink || null,
           status: serviceStatus,
         };
         if (imageUrl) updateData.image_url = imageUrl;
@@ -130,12 +189,19 @@ const AdminServicesUpload = () => {
           description: serviceDescription,
           price: servicePrice,
           features: featuresArray,
+          link: serviceLink || null,
           image_url: imageUrl,
           status: serviceStatus,
           created_by: user?.id,
         });
 
         if (error) throw error;
+        
+        // Send notifications to all users for new active services
+        if (serviceStatus === "active") {
+          await sendNotificationsToAllUsers(serviceName);
+        }
+        
         toast({ title: "Success", description: "Service added successfully" });
       }
 
@@ -158,6 +224,7 @@ const AdminServicesUpload = () => {
     setServiceDescription("");
     setServicePrice("");
     setServiceFeatures("");
+    setServiceLink("");
     setServiceStatus("draft");
     setImageFile(null);
     setEditingId(null);
@@ -169,6 +236,7 @@ const AdminServicesUpload = () => {
     setServiceDescription(service.description || "");
     setServicePrice(service.price);
     setServiceFeatures(service.features?.join("\n") || "");
+    setServiceLink(service.link || "");
     setServiceStatus(service.status);
   };
 
@@ -235,6 +303,23 @@ const AdminServicesUpload = () => {
                   placeholder="e.g., $99/month or Free"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="serviceLink">External Link (Optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="serviceLink"
+                    value={serviceLink}
+                    onChange={(e) => setServiceLink(e.target.value)}
+                    placeholder="https://example.com/service"
+                    type="url"
+                  />
+                  <LinkIcon className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  If provided, users will see a "Visit" button
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -322,7 +407,10 @@ const AdminServicesUpload = () => {
                         />
                       )}
                       <div>
-                        <p className="font-medium">{service.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{service.name}</p>
+                          {service.link && <LinkIcon className="w-3 h-3 text-primary" />}
+                        </div>
                         <p className="text-sm text-muted-foreground">{service.price}</p>
                       </div>
                     </div>
