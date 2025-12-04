@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,109 +7,141 @@ import {
   Bell,
   CheckCheck,
   Trash2,
-  Mail,
-  CreditCard,
-  TrendingUp,
-  AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
-const notificationsData = [
-  {
-    id: 1,
-    type: "success",
-    title: "Payment Successful",
-    message: "Your payment of $49.00 has been processed successfully",
-    timestamp: "2 minutes ago",
-    read: false,
-    icon: CreditCard,
-  },
-  {
-    id: 2,
-    type: "info",
-    title: "New Feature Available",
-    message: "Check out our new Email Automation tool",
-    timestamp: "1 hour ago",
-    read: false,
-    icon: Bell,
-  },
-  {
-    id: 3,
-    type: "warning",
-    title: "Subscription Expiring Soon",
-    message: "Your Pro plan will expire in 7 days",
-    timestamp: "3 hours ago",
-    read: true,
-    icon: AlertCircle,
-  },
-  {
-    id: 4,
-    type: "success",
-    title: "Campaign Performance",
-    message: "Your email campaign achieved 35% open rate",
-    timestamp: "5 hours ago",
-    read: true,
-    icon: TrendingUp,
-  },
-  {
-    id: 5,
-    type: "info",
-    title: "Weekly Report Ready",
-    message: "Your weekly analytics report is available to download",
-    timestamp: "1 day ago",
-    read: true,
-    icon: Mail,
-  },
-  {
-    id: 6,
-    type: "warning",
-    title: "High Usage Alert",
-    message: "You've used 85% of your monthly tool quota",
-    timestamp: "2 days ago",
-    read: true,
-    icon: AlertCircle,
-  },
-];
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  link: string | null;
+  created_at: string;
+}
 
 const Notifications = () => {
-  const [notifications, setNotifications] = useState(notificationsData);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching notifications:", error);
+    } else {
+      setNotifications(data || []);
+    }
+    setLoading(false);
+  };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const markAsRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, read: true } : notif
-      )
-    );
+  const markAsRead = async (id: string) => {
+    const { error } = await supabase
+      .from("notifications")
+      .update({ read: true })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error marking as read:", error);
+    } else {
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, read: true } : notif
+        )
+      );
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) =>
-      prev.map((notif) => ({ ...notif, read: true }))
-    );
-    toast({
-      title: "Success",
-      description: "All notifications marked as read",
-    });
+  const markAllAsRead = async () => {
+    const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+    
+    if (unreadIds.length === 0) return;
+
+    const { error } = await supabase
+      .from("notifications")
+      .update({ read: true })
+      .in("id", unreadIds);
+
+    if (error) {
+      console.error("Error marking all as read:", error);
+      toast({
+        title: "Error",
+        description: "Failed to mark all as read",
+        variant: "destructive",
+      });
+    } else {
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, read: true }))
+      );
+      toast({
+        title: "Success",
+        description: "All notifications marked as read",
+      });
+    }
   };
 
-  const deleteNotification = (id: number) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-    toast({
-      title: "Deleted",
-      description: "Notification removed",
-    });
+  const deleteNotification = async (id: string) => {
+    const { error } = await supabase
+      .from("notifications")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting notification:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete notification",
+        variant: "destructive",
+      });
+    } else {
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+      toast({
+        title: "Deleted",
+        description: "Notification removed",
+      });
+    }
   };
 
-  const clearAll = () => {
-    setNotifications([]);
-    toast({
-      title: "Cleared",
-      description: "All notifications have been cleared",
-    });
+  const clearAll = async () => {
+    const ids = notifications.map(n => n.id);
+    
+    if (ids.length === 0) return;
+
+    const { error } = await supabase
+      .from("notifications")
+      .delete()
+      .in("id", ids);
+
+    if (error) {
+      console.error("Error clearing notifications:", error);
+      toast({
+        title: "Error",
+        description: "Failed to clear notifications",
+        variant: "destructive",
+      });
+    } else {
+      setNotifications([]);
+      toast({
+        title: "Cleared",
+        description: "All notifications have been cleared",
+      });
+    }
   };
 
   const getTypeColor = (type: string) => {
@@ -120,10 +152,41 @@ const Notifications = () => {
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
       case "info":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "error":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
     }
   };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    return date.toLocaleDateString();
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+    if (notification.link) {
+      navigate(notification.link);
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full p-10">
+          <div className="text-lg">Loading notifications...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -137,11 +200,11 @@ const Notifications = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={markAllAsRead}>
+              <Button variant="outline" onClick={markAllAsRead} disabled={unreadCount === 0}>
                 <CheckCheck className="w-4 h-4 mr-2" />
                 Mark All Read
               </Button>
-              <Button variant="outline" onClick={clearAll}>
+              <Button variant="outline" onClick={clearAll} disabled={notifications.length === 0}>
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear All
               </Button>
@@ -201,9 +264,10 @@ const Notifications = () => {
               notifications.map((notification) => (
                 <Card
                   key={notification.id}
-                  className={
+                  className={`cursor-pointer transition-colors hover:bg-accent/50 ${
                     !notification.read ? "border-primary/50 bg-primary/5" : ""
-                  }
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
@@ -212,7 +276,7 @@ const Notifications = () => {
                           notification.type
                         )}`}
                       >
-                        <notification.icon className="w-5 h-5" />
+                        <Bell className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -228,6 +292,9 @@ const Notifications = () => {
                                 New
                               </Badge>
                             )}
+                            {notification.link && (
+                              <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                            )}
                           </div>
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">
@@ -235,14 +302,17 @@ const Notifications = () => {
                         </p>
                         <div className="flex items-center justify-between">
                           <p className="text-xs text-muted-foreground">
-                            {notification.timestamp}
+                            {formatTimeAgo(notification.created_at)}
                           </p>
                           <div className="flex items-center gap-2">
                             {!notification.read && (
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => markAsRead(notification.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(notification.id);
+                                }}
                               >
                                 Mark as Read
                               </Button>
@@ -250,7 +320,10 @@ const Notifications = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => deleteNotification(notification.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteNotification(notification.id);
+                              }}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -278,7 +351,11 @@ const Notifications = () => {
               notifications
                 .filter((n) => !n.read)
                 .map((notification) => (
-                  <Card key={notification.id} className="border-primary/50 bg-primary/5">
+                  <Card
+                    key={notification.id}
+                    className="cursor-pointer border-primary/50 bg-primary/5 hover:bg-primary/10 transition-colors"
+                    onClick={() => handleNotificationClick(notification)}
+                  >
                     <CardContent className="pt-6">
                       <div className="flex items-start gap-4">
                         <div
@@ -286,7 +363,7 @@ const Notifications = () => {
                             notification.type
                           )}`}
                         >
-                          <notification.icon className="w-5 h-5" />
+                          <Bell className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-1">
@@ -300,6 +377,9 @@ const Notifications = () => {
                               >
                                 New
                               </Badge>
+                              {notification.link && (
+                                <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                              )}
                             </div>
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
@@ -307,22 +387,26 @@ const Notifications = () => {
                           </p>
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {notification.timestamp}
+                              {formatTimeAgo(notification.created_at)}
                             </p>
                             <div className="flex items-center gap-2">
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => markAsRead(notification.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markAsRead(notification.id);
+                                }}
                               >
                                 Mark as Read
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() =>
-                                  deleteNotification(notification.id)
-                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteNotification(notification.id);
+                                }}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>

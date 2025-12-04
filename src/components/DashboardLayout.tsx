@@ -16,6 +16,7 @@ import {
   Users,
   FileText,
   BarChart3,
+  Tags,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -101,6 +102,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const adminNavItems = [
     { path: "/admin", icon: Shield, label: "Admin Dashboard" },
     { path: "/admin/users", icon: Users, label: "User Management" },
+    { path: "/admin/categories", icon: Tags, label: "Categories" },
     { path: "/admin/logs", icon: FileText, label: "System Logs" },
     { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     { path: "/admin/tools-upload", icon: Wrench, label: "Tools Upload" },
