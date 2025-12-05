@@ -1,93 +1,81 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Search, TrendingUp, Target, Mail, BarChart3, Globe } from "lucide-react";
+import { Search, Layers, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-const servicesData = [
-  {
-    id: 1,
-    title: "SEO Booster",
-    description: "Optimize your website's search engine ranking with advanced SEO strategies.",
-    icon: TrendingUp,
-    status: "active",
-    price: "$49/mo",
-  },
-  {
-    id: 2,
-    title: "Social Media Manager",
-    description: "Manage all your social media accounts from one powerful dashboard.",
-    icon: Globe,
-    status: "active",
-    price: "$39/mo",
-  },
-  {
-    id: 3,
-    title: "Email Marketing Pro",
-    description: "Create, send, and track email campaigns with advanced automation.",
-    icon: Mail,
-    status: "active",
-    price: "$29/mo",
-  },
-  {
-    id: 4,
-    title: "Ad Campaign Optimizer",
-    description: "Maximize your ad spend with AI-powered campaign optimization.",
-    icon: Target,
-    status: "inactive",
-    price: "$59/mo",
-  },
-  {
-    id: 5,
-    title: "Analytics Dashboard",
-    description: "Get comprehensive insights into your marketing performance.",
-    icon: BarChart3,
-    status: "inactive",
-    price: "$44/mo",
-  },
-  {
-    id: 6,
-    title: "Content Marketing Suite",
-    description: "Plan, create, and distribute content across all your channels.",
-    icon: Search,
-    status: "inactive",
-    price: "$54/mo",
-  },
-];
+interface Service {
+  id: string;
+  name: string;
+  description: string | null;
+  price: string;
+  features: string[] | null;
+  image_url: string | null;
+  link: string | null;
+  status: string;
+}
 
 const ServicesPage = () => {
-  const [services, setServices] = useState(servicesData);
+  const [services, setServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const toggleService = (id: number) => {
-    setServices((prev) =>
-      prev.map((service) =>
-        service.id === id
-          ? {
-              ...service,
-              status: service.status === "active" ? "inactive" : "active",
-            }
-          : service
-      )
-    );
-    
-    toast({
-      title: "Service Updated",
-      description: "Service status changed successfully",
-    });
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("services")
+      .select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching services:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch services",
+        variant: "destructive",
+      });
+    } else {
+      setServices(data || []);
+    }
+    setLoading(false);
   };
 
-  const filteredServices = services.filter((service) =>
-    service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    service.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredServices = services.filter(
+    (service) =>
+      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (service.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
   );
 
-  const activeCount = services.filter((s) => s.status === "active").length;
+  const handleVisit = (service: Service) => {
+    if (service.link) {
+      window.open(service.link, "_blank");
+    } else {
+      toast({
+        title: "Service Details",
+        description: `Viewing details for ${service.name}`,
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full p-10">
+          <div className="text-lg">Loading services...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -95,7 +83,7 @@ const ServicesPage = () => {
         <div className="mb-8">
           <h1 className="text-4xl font-black mb-2">Services</h1>
           <p className="text-base text-muted-foreground">
-            Manage your marketing services and subscriptions
+            Explore our marketing services
           </p>
         </div>
 
@@ -103,40 +91,25 @@ const ServicesPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Services</p>
-                  <p className="text-3xl font-bold">{activeCount}</p>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-primary" />
-                </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold">{services.length}</p>
+                <p className="text-sm text-muted-foreground">Total Services</p>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Services</p>
-                  <p className="text-3xl font-bold">{services.length}</p>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-primary" />
-                </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold">{filteredServices.length}</p>
+                <p className="text-sm text-muted-foreground">Showing</p>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Monthly Cost</p>
-                  <p className="text-3xl font-bold">$117</p>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-primary" />
-                </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold">{services.filter(s => s.link).length}</p>
+                <p className="text-sm text-muted-foreground">With Links</p>
               </div>
             </CardContent>
           </Card>
@@ -158,57 +131,57 @@ const ServicesPage = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service) => (
-            <Card key={service.id} className="relative">
+            <Card key={service.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <service.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <Badge
-                    variant={service.status === "active" ? "default" : "secondary"}
-                    className={
-                      service.status === "active"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                        : ""
-                    }
-                  >
-                    {service.status === "active" ? "Active" : "Inactive"}
-                  </Badge>
+                  {service.image_url ? (
+                    <img
+                      src={service.image_url}
+                      alt={service.name}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Layers className="w-6 h-6 text-primary" />
+                    </div>
+                  )}
+                  <Badge variant="secondary">{service.price}</Badge>
                 </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
+                <CardTitle className="text-xl">{service.name}</CardTitle>
                 <CardDescription>{service.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-bold">{service.price}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      {service.status === "active" ? "Enabled" : "Disabled"}
-                    </span>
-                    <Switch
-                      checked={service.status === "active"}
-                      onCheckedChange={() => toggleService(service.id)}
-                    />
-                  </div>
-                </div>
+                {service.features && service.features.length > 0 && (
+                  <ul className="text-sm text-muted-foreground mb-4 space-y-1">
+                    {service.features.slice(0, 3).map((feature, idx) => (
+                      <li key={idx}>• {feature}</li>
+                    ))}
+                  </ul>
+                )}
                 <Button
-                  variant="outline"
-                  className="w-full mt-4"
-                  onClick={() =>
-                    toast({
-                      title: "Service Details",
-                      description: `Viewing details for ${service.title}`,
-                    })
-                  }
+                  className="w-full"
+                  onClick={() => handleVisit(service)}
                 >
-                  View Details
+                  {service.link ? (
+                    <>
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Visit Service
+                    </>
+                  ) : (
+                    "View Details"
+                  )}
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {filteredServices.length === 0 && (
+          <div className="text-center py-12">
+            <Layers className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg text-muted-foreground">No services found</p>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
