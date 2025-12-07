@@ -17,6 +17,7 @@ interface AITool {
 }
 
 const AISection = () => {
+  // Add id for navbar navigation
   const [aiTools, setAITools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +55,7 @@ const AISection = () => {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+    <section id="ai-section" className="py-20 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

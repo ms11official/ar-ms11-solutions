@@ -33,8 +33,8 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors">
                 Services
               </button>
-              <button onClick={() => scrollToSection('pricing')} className="text-sm font-medium hover:text-primary transition-colors">
-                Pricing
+              <button onClick={() => scrollToSection('ai-section')} className="text-sm font-medium hover:text-primary transition-colors">
+                AI
               </button>
               <button onClick={() => scrollToSection('tools')} className="text-sm font-medium hover:text-primary transition-colors">
                 Tools
