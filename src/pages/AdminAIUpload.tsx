@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sparkles, Upload, Plus, Trash2, Edit, Image, Link as LinkIcon } from "lucide-react";
+import { Sparkles, Upload, Plus, Trash2, Edit, Image, Link as LinkIcon, DollarSign, Tag, Users, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -23,6 +23,8 @@ interface AIItem {
   status: string;
   type: "tool" | "service";
   created_at: string;
+  features?: string[] | null;
+  price?: string;
 }
 
 interface Category {
@@ -40,10 +42,16 @@ const AdminAIUpload = () => {
   const { isAdmin, loading: roleLoading } = useUserRole(user?.id);
   const { toast } = useToast();
 
-  const [itemName, setItemName] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
+  // Form fields
+  const [itemTitle, setItemTitle] = useState("");
+  const [itemShortLine, setItemShortLine] = useState("");
+  const [itemKeyFeatures, setItemKeyFeatures] = useState("");
+  const [itemPrice, setItemPrice] = useState("");
+  const [itemOldPrice, setItemOldPrice] = useState("");
+  const [itemDiscount, setItemDiscount] = useState("");
+  const [itemTestUrl, setItemTestUrl] = useState("");
+  const [itemBestFor, setItemBestFor] = useState("");
   const [itemCategory, setItemCategory] = useState("");
-  const [itemLink, setItemLink] = useState("");
   const [itemStatus, setItemStatus] = useState("draft");
   const [itemType, setItemType] = useState<"tool" | "service">("tool");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -73,14 +81,12 @@ const AdminAIUpload = () => {
   }, [loading, roleLoading, user, isAdmin]);
 
   const fetchAIItems = async () => {
-    // Fetch AI tools
     const { data: toolsData } = await supabase
       .from("tools")
       .select("*")
       .ilike("category", "%AI%")
       .order("created_at", { ascending: false });
 
-    // Fetch AI services (we'll filter by name/description containing AI)
     const { data: servicesData } = await supabase
       .from("services")
       .select("*")
@@ -142,6 +148,25 @@ const AdminAIUpload = () => {
     }
   };
 
+  const buildDescription = () => {
+    const parts = [];
+    if (itemShortLine) parts.push(itemShortLine);
+    if (itemBestFor) parts.push(`Best For: ${itemBestFor}`);
+    if (itemDiscount) parts.push(`${itemDiscount}% OFF`);
+    return parts.join(" | ");
+  };
+
+  const buildFeatures = () => {
+    if (!itemKeyFeatures) return null;
+    return itemKeyFeatures.split(",").map(f => f.trim()).filter(f => f);
+  };
+
+  const buildPrice = () => {
+    let priceStr = itemPrice || "Free";
+    if (itemOldPrice) priceStr = `${priceStr} (was ${itemOldPrice})`;
+    return priceStr;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -152,56 +177,55 @@ const AdminAIUpload = () => {
         imageUrl = await uploadImage(imageFile, itemType === "tool" ? "tools-images" : "services-images");
       }
 
+      const description = buildDescription();
+      const features = buildFeatures();
+      const price = buildPrice();
+
       if (itemType === "tool") {
+        const toolData = {
+          name: itemTitle,
+          description: description,
+          category: itemCategory || "AI Tools",
+          link: itemTestUrl || null,
+          status: itemStatus,
+          ...(imageUrl ? { image_url: imageUrl } : {}),
+        };
+
         if (editingId) {
-          const { error } = await supabase.from("tools").update({
-            name: itemName,
-            description: itemDescription,
-            category: itemCategory || "AI Tools",
-            link: itemLink || null,
-            status: itemStatus,
-            ...(imageUrl ? { image_url: imageUrl } : {}),
-          }).eq("id", editingId);
+          const { error } = await supabase.from("tools").update(toolData).eq("id", editingId);
           if (error) throw error;
           toast({ title: "Success", description: "AI Tool updated successfully" });
         } else {
           const { error } = await supabase.from("tools").insert({
-            name: itemName,
-            description: itemDescription,
-            category: itemCategory || "AI Tools",
-            link: itemLink || null,
-            status: itemStatus,
+            ...toolData,
             created_by: user?.id,
-            ...(imageUrl ? { image_url: imageUrl } : {}),
           });
           if (error) throw error;
-          if (itemStatus === "active") await sendNotificationsToAllUsers(itemName, "Tool");
+          if (itemStatus === "active") await sendNotificationsToAllUsers(itemTitle, "Tool");
           toast({ title: "Success", description: "AI Tool added successfully" });
         }
       } else {
+        const serviceData = {
+          name: itemTitle,
+          description: description,
+          price: price,
+          features: features,
+          link: itemTestUrl || null,
+          status: itemStatus,
+          ...(imageUrl ? { image_url: imageUrl } : {}),
+        };
+
         if (editingId) {
-          const { error } = await supabase.from("services").update({
-            name: itemName,
-            description: itemDescription,
-            price: "Contact for pricing",
-            link: itemLink || null,
-            status: itemStatus,
-            ...(imageUrl ? { image_url: imageUrl } : {}),
-          }).eq("id", editingId);
+          const { error } = await supabase.from("services").update(serviceData).eq("id", editingId);
           if (error) throw error;
           toast({ title: "Success", description: "AI Service updated successfully" });
         } else {
           const { error } = await supabase.from("services").insert({
-            name: itemName,
-            description: itemDescription,
-            price: "Contact for pricing",
-            link: itemLink || null,
-            status: itemStatus,
+            ...serviceData,
             created_by: user?.id,
-            ...(imageUrl ? { image_url: imageUrl } : {}),
           });
           if (error) throw error;
-          if (itemStatus === "active") await sendNotificationsToAllUsers(itemName, "Service");
+          if (itemStatus === "active") await sendNotificationsToAllUsers(itemTitle, "Service");
           toast({ title: "Success", description: "AI Service added successfully" });
         }
       }
@@ -220,10 +244,15 @@ const AdminAIUpload = () => {
   };
 
   const resetForm = () => {
-    setItemName("");
-    setItemDescription("");
+    setItemTitle("");
+    setItemShortLine("");
+    setItemKeyFeatures("");
+    setItemPrice("");
+    setItemOldPrice("");
+    setItemDiscount("");
+    setItemTestUrl("");
+    setItemBestFor("");
     setItemCategory("");
-    setItemLink("");
     setItemStatus("draft");
     setItemType("tool");
     setImageFile(null);
@@ -232,10 +261,15 @@ const AdminAIUpload = () => {
 
   const handleEdit = (item: AIItem) => {
     setEditingId(item.id);
-    setItemName(item.name);
-    setItemDescription(item.description || "");
+    setItemTitle(item.name);
+    setItemShortLine(item.description?.split(" | ")[0] || "");
+    setItemKeyFeatures(item.features?.join(", ") || "");
+    setItemPrice(item.price?.split(" (was")[0] || "");
+    setItemOldPrice("");
+    setItemDiscount("");
+    setItemTestUrl(item.link || "");
+    setItemBestFor("");
     setItemCategory(item.category);
-    setItemLink(item.link || "");
     setItemStatus(item.status);
     setItemType(item.type);
   };
@@ -298,14 +332,102 @@ const AdminAIUpload = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="itemName">Name</Label>
+                <Label htmlFor="itemTitle">Title *</Label>
                 <Input
-                  id="itemName"
-                  value={itemName}
-                  onChange={(e) => setItemName(e.target.value)}
-                  placeholder="Enter name"
+                  id="itemTitle"
+                  value={itemTitle}
+                  onChange={(e) => setItemTitle(e.target.value)}
+                  placeholder="Enter title"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="itemShortLine">Short Line</Label>
+                <Input
+                  id="itemShortLine"
+                  value={itemShortLine}
+                  onChange={(e) => setItemShortLine(e.target.value)}
+                  placeholder="Brief one-line description"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="itemKeyFeatures">Key Features</Label>
+                <Textarea
+                  id="itemKeyFeatures"
+                  value={itemKeyFeatures}
+                  onChange={(e) => setItemKeyFeatures(e.target.value)}
+                  placeholder="Feature 1, Feature 2, Feature 3 (comma separated)"
+                  rows={2}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="itemPrice">Price</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="itemPrice"
+                      value={itemPrice}
+                      onChange={(e) => setItemPrice(e.target.value)}
+                      placeholder="29.99"
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="itemOldPrice">Old Price</Label>
+                  <Input
+                    id="itemOldPrice"
+                    value={itemOldPrice}
+                    onChange={(e) => setItemOldPrice(e.target.value)}
+                    placeholder="49.99"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="itemDiscount">% Off</Label>
+                  <div className="relative">
+                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="itemDiscount"
+                      value={itemDiscount}
+                      onChange={(e) => setItemDiscount(e.target.value)}
+                      placeholder="40"
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="itemTestUrl">Test URL</Label>
+                <div className="relative">
+                  <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="itemTestUrl"
+                    value={itemTestUrl}
+                    onChange={(e) => setItemTestUrl(e.target.value)}
+                    placeholder="https://example.com/try"
+                    type="url"
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="itemBestFor">Best For</Label>
+                <div className="relative">
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="itemBestFor"
+                    value={itemBestFor}
+                    onChange={(e) => setItemBestFor(e.target.value)}
+                    placeholder="Marketers, Content Creators, etc."
+                    className="pl-9"
+                  />
+                </div>
               </div>
 
               {itemType === "tool" && (
@@ -333,20 +455,6 @@ const AdminAIUpload = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="itemLink">External Link (Optional)</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="itemLink"
-                    value={itemLink}
-                    onChange={(e) => setItemLink(e.target.value)}
-                    placeholder="https://example.com"
-                    type="url"
-                  />
-                  <LinkIcon className="w-5 h-5 text-muted-foreground" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
                 <Label>Status</Label>
                 <Select value={itemStatus} onValueChange={setItemStatus}>
                   <SelectTrigger>
@@ -371,18 +479,6 @@ const AdminAIUpload = () => {
                   />
                   <Image className="w-5 h-5 text-muted-foreground" />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="itemDescription">Description</Label>
-                <Textarea
-                  id="itemDescription"
-                  value={itemDescription}
-                  onChange={(e) => setItemDescription(e.target.value)}
-                  placeholder="Describe this AI tool/service..."
-                  rows={4}
-                  required
-                />
               </div>
 
               <div className="flex gap-2">
@@ -461,6 +557,7 @@ const AdminAIUpload = () => {
                             <p className="font-medium">{item.name}</p>
                             {item.link && <LinkIcon className="w-3 h-3 text-primary" />}
                           </div>
+                          <p className="text-sm text-muted-foreground">{item.price}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
