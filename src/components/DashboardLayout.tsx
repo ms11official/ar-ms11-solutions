@@ -17,6 +17,7 @@ import {
   FileText,
   BarChart3,
   Tags,
+  Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -95,6 +96,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/profile", icon: UserIcon, label: "My Profile" },
     { path: "/services", icon: Layers, label: "Services" },
     { path: "/tools", icon: Wrench, label: "Tools" },
+    { path: "/ai", icon: Sparkles, label: "AI Tools" },
     { path: "/activity", icon: History, label: "Activity History" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
@@ -103,6 +105,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/admin", icon: Shield, label: "Admin Dashboard" },
     { path: "/admin/users", icon: Users, label: "User Management" },
     { path: "/admin/categories", icon: Tags, label: "Categories" },
+    { path: "/admin/ai-upload", icon: Sparkles, label: "AI Tools & Services" },
     { path: "/admin/logs", icon: FileText, label: "System Logs" },
     { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     { path: "/admin/tools-upload", icon: Wrench, label: "Tools Upload" },

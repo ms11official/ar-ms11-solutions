@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Pricing from "@/components/Pricing";
 import Tools from "@/components/Tools";
+import AISection from "@/components/AISection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -11,6 +12,7 @@ const Index = () => {
       <Navbar />
       <Hero />
       <Services />
+      <AISection />
       <Pricing />
       <Tools />
       <Footer />

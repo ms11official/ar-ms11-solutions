@@ -17,9 +17,11 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminToolsUpload from "./pages/AdminToolsUpload";
 import AdminServicesUpload from "./pages/AdminServicesUpload";
 import AdminCategories from "./pages/AdminCategories";
+import AdminAIUpload from "./pages/AdminAIUpload";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
 import ToolsPage from "./pages/ToolsPage";
+import AIPage from "./pages/AIPage";
 import ActivityHistory from "./pages/ActivityHistory";
 import SettingsPage from "./pages/SettingsPage";
 import Notifications from "./pages/Notifications";
@@ -49,6 +51,7 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/ai-upload" element={<AdminAIUpload />} />
             <Route path="/admin/logs" element={<AdminLogs />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/tools-upload" element={<AdminToolsUpload />} />
@@ -56,6 +59,7 @@ const App = () => (
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/tools" element={<ToolsPage />} />
+            <Route path="/ai" element={<AIPage />} />
             <Route path="/activity" element={<ActivityHistory />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/notifications" element={<Notifications />} />
