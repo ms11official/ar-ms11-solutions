@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ interface AITool {
 }
 
 const AIPage = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [aiTools, setAITools] = useState<AITool[]>([]);
@@ -162,7 +164,11 @@ const AIPage = () => {
         {/* AI Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTools.map((tool) => (
-            <Card key={tool.id} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
+            <Card 
+              key={tool.id} 
+              className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group cursor-pointer"
+              onClick={() => navigate(`/ai/${tool.id}`)}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
                   {tool.image_url ? (
@@ -188,7 +194,10 @@ const AIPage = () => {
               <CardContent>
                 <Button
                   className="w-full"
-                  onClick={() => handleVisit(tool)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleVisit(tool);
+                  }}
                   variant={tool.link ? "default" : "secondary"}
                 >
                   {tool.link ? (
@@ -197,7 +206,7 @@ const AIPage = () => {
                       Visit Tool
                     </>
                   ) : (
-                    "Coming Soon"
+                    "View Details"
                   )}
                 </Button>
               </CardContent>

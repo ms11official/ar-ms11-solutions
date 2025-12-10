@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ interface Service {
 }
 
 const ServicesPage = () => {
+  const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -131,7 +133,11 @@ const ServicesPage = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service) => (
-            <Card key={service.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={service.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => navigate(`/services/${service.id}`)}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
                   {service.image_url ? (
@@ -160,7 +166,10 @@ const ServicesPage = () => {
                 )}
                 <Button
                   className="w-full"
-                  onClick={() => handleVisit(service)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleVisit(service);
+                  }}
                 >
                   {service.link ? (
                     <>

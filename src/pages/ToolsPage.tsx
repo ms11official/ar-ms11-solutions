@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ interface Tool {
 }
 
 const ToolsPage = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [tools, setTools] = useState<Tool[]>([]);
@@ -165,7 +167,11 @@ const ToolsPage = () => {
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTools.map((tool) => (
-            <Card key={tool.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={tool.id} 
+              className="hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => navigate(`/tools/${tool.id}`)}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
                   {tool.image_url ? (
@@ -188,7 +194,10 @@ const ToolsPage = () => {
                 <div className="flex items-center gap-2">
                   <Button
                     className="flex-1"
-                    onClick={() => handleLaunch(tool)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLaunch(tool);
+                    }}
                   >
                     {tool.link ? (
                       <>
@@ -196,7 +205,7 @@ const ToolsPage = () => {
                         Visit Tool
                       </>
                     ) : (
-                      "Launch Tool"
+                      "View Details"
                     )}
                   </Button>
                 </div>
