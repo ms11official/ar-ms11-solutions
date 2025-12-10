@@ -20,8 +20,11 @@ import AdminCategories from "./pages/AdminCategories";
 import AdminAIUpload from "./pages/AdminAIUpload";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import ToolsPage from "./pages/ToolsPage";
+import ToolDetail from "./pages/ToolDetail";
 import AIPage from "./pages/AIPage";
+import AIDetail from "./pages/AIDetail";
 import ActivityHistory from "./pages/ActivityHistory";
 import SettingsPage from "./pages/SettingsPage";
 import Notifications from "./pages/Notifications";
@@ -32,7 +35,6 @@ import Blog from "./pages/Blog";
 import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -58,8 +60,11 @@ const App = () => (
             <Route path="/admin/services-upload" element={<AdminServicesUpload />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/tools" element={<ToolsPage />} />
+            <Route path="/tools/:id" element={<ToolDetail />} />
             <Route path="/ai" element={<AIPage />} />
+            <Route path="/ai/:id" element={<AIDetail />} />
             <Route path="/activity" element={<ActivityHistory />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/notifications" element={<Notifications />} />
