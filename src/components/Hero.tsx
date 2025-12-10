@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import heroBg from "@/assets/hero-bg.jpg";
 
 const heroContent = [
   {
@@ -31,14 +30,8 @@ const Hero = () => {
 
   return (
     <section 
-      className="w-full py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
-      style={{
-        backgroundImage: `url(${heroBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
+      className="w-full py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background"
     >
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
