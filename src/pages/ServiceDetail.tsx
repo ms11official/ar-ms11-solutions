@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Layers, ExternalLink, Calendar, CheckCircle } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import ShareButtons from "@/components/ShareButtons";
+import RelatedItems from "@/components/RelatedItems";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,6 +26,7 @@ const ServiceDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [service, setService] = useState<Service | null>(null);
+  const [relatedServices, setRelatedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -57,6 +60,15 @@ const ServiceDetail = () => {
       navigate("/services");
     } else {
       setService(data);
+      // Fetch related services
+      const { data: related } = await supabase
+        .from("services")
+        .select("*")
+        .eq("status", "active")
+        .limit(5);
+      if (related) {
+        setRelatedServices(related);
+      }
     }
     setLoading(false);
   };
@@ -164,8 +176,16 @@ const ServiceDetail = () => {
                 </Button>
               )}
             </div>
+
+            <ShareButtons title={service.name} />
           </CardContent>
         </Card>
+
+        <RelatedItems 
+          items={relatedServices} 
+          type="service" 
+          currentItemId={service.id} 
+        />
       </div>
     </DashboardLayout>
   );

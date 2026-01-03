@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Sparkles, ExternalLink, Calendar } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import ShareButtons from "@/components/ShareButtons";
+import RelatedItems from "@/components/RelatedItems";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,6 +25,7 @@ const AIDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [tool, setTool] = useState<AITool | null>(null);
+  const [relatedTools, setRelatedTools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -56,6 +59,16 @@ const AIDetail = () => {
       navigate("/ai");
     } else {
       setTool(data);
+      // Fetch related AI tools by category
+      const { data: related } = await supabase
+        .from("tools")
+        .select("*")
+        .eq("category", data.category)
+        .eq("status", "active")
+        .limit(5);
+      if (related) {
+        setRelatedTools(related);
+      }
     }
     setLoading(false);
   };
@@ -149,8 +162,16 @@ const AIDetail = () => {
                 </Button>
               )}
             </div>
+
+            <ShareButtons title={tool.name} />
           </CardContent>
         </Card>
+
+        <RelatedItems 
+          items={relatedTools} 
+          type="ai" 
+          currentItemId={tool.id} 
+        />
       </div>
     </DashboardLayout>
   );
