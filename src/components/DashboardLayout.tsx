@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
 import { CommandPalette } from "./CommandPalette";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import logo from "@/assets/logo.png";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -119,15 +120,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <aside className={`${sidebarCollapsed ? 'w-20' : 'w-64'} border-r border-border bg-card flex flex-col p-4 transition-all duration-300`}>
         <div className="flex items-center justify-between px-3 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6">
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-            {!sidebarCollapsed && <h2 className="text-xl font-bold">AR-MS11</h2>}
+            <img src={logo} alt="AR-MS7 Logo" className="w-8 h-8 object-contain" />
+            {!sidebarCollapsed && <h2 className="text-xl font-bold">AR-MS7</h2>}
           </div>
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
