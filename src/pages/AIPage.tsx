@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Sparkles, ExternalLink } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,7 +26,15 @@ const AIPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [aiTools, setAITools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id } : null);
+    });
+  }, []);
 
   useEffect(() => {
     fetchAITools();
@@ -182,9 +192,16 @@ const AIPage = () => {
                       <Sparkles className="w-6 h-6 text-primary" />
                     </div>
                   )}
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">
-                    {tool.category}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="bg-primary/10 text-primary">
+                      {tool.category}
+                    </Badge>
+                    <FavoriteButton
+                      size="sm"
+                      isFavorite={isFavorite(tool.id, 'ai')}
+                      onToggle={() => toggleFavorite(tool.id, 'ai')}
+                    />
+                  </div>
                 </div>
                 <CardTitle className="text-xl group-hover:text-primary transition-colors">
                   {tool.name}

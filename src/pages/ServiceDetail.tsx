@@ -7,6 +7,9 @@ import { ArrowLeft, Layers, ExternalLink, Calendar, CheckCircle } from "lucide-r
 import DashboardLayout from "@/components/DashboardLayout";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedItems from "@/components/RelatedItems";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ReviewSection } from "@/components/ReviewSection";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,7 +31,15 @@ const ServiceDetail = () => {
   const [service, setService] = useState<Service | null>(null);
   const [relatedServices, setRelatedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id, email: session.user.email } : null);
+    });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -60,7 +71,6 @@ const ServiceDetail = () => {
       navigate("/services");
     } else {
       setService(data);
-      // Fetch related services
       const { data: related } = await supabase
         .from("services")
         .select("*")
@@ -175,11 +185,22 @@ const ServiceDetail = () => {
                   Contact for Details
                 </Button>
               )}
+              <FavoriteButton
+                isFavorite={isFavorite(service.id, 'service')}
+                onToggle={() => toggleFavorite(service.id, 'service')}
+              />
             </div>
 
             <ShareButtons title={service.name} />
           </CardContent>
         </Card>
+
+        <ReviewSection
+          itemId={service.id}
+          itemType="service"
+          userId={user?.id}
+          userEmail={user?.email}
+        />
 
         <RelatedItems 
           items={relatedServices} 
