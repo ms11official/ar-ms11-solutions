@@ -7,6 +7,9 @@ import { ArrowLeft, Sparkles, ExternalLink, Calendar } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedItems from "@/components/RelatedItems";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ReviewSection } from "@/components/ReviewSection";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,7 +30,15 @@ const AIDetail = () => {
   const [tool, setTool] = useState<AITool | null>(null);
   const [relatedTools, setRelatedTools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id, email: session.user.email } : null);
+    });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -59,7 +70,6 @@ const AIDetail = () => {
       navigate("/ai");
     } else {
       setTool(data);
-      // Fetch related AI tools by category
       const { data: related } = await supabase
         .from("tools")
         .select("*")
@@ -161,11 +171,22 @@ const AIDetail = () => {
                   Coming Soon
                 </Button>
               )}
+              <FavoriteButton
+                isFavorite={isFavorite(tool.id, 'ai')}
+                onToggle={() => toggleFavorite(tool.id, 'ai')}
+              />
             </div>
 
             <ShareButtons title={tool.name} />
           </CardContent>
         </Card>
+
+        <ReviewSection
+          itemId={tool.id}
+          itemType="ai"
+          userId={user?.id}
+          userEmail={user?.email}
+        />
 
         <RelatedItems 
           items={relatedTools} 

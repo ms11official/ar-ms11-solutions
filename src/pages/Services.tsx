@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Layers, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import DashboardLayout from "@/components/DashboardLayout";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,7 +27,15 @@ const ServicesPage = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id } : null);
+    });
+  }, []);
 
   useEffect(() => {
     fetchServices();
@@ -151,7 +161,14 @@ const ServicesPage = () => {
                       <Layers className="w-6 h-6 text-primary" />
                     </div>
                   )}
-                  <Badge variant="secondary">{service.price}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{service.price}</Badge>
+                    <FavoriteButton
+                      size="sm"
+                      isFavorite={isFavorite(service.id, 'service')}
+                      onToggle={() => toggleFavorite(service.id, 'service')}
+                    />
+                  </div>
                 </div>
                 <CardTitle className="text-xl">{service.name}</CardTitle>
                 <CardDescription>{service.description}</CardDescription>

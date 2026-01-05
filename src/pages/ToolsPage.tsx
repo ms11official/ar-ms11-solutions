@@ -4,8 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Wrench, ExternalLink } from "lucide-react";
+import { Search, Wrench, ExternalLink, Heart } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,7 +29,15 @@ const ToolsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id } : null);
+    });
+  }, []);
 
   useEffect(() => {
     fetchTools();
@@ -185,7 +195,14 @@ const ToolsPage = () => {
                       <Wrench className="w-6 h-6 text-primary" />
                     </div>
                   )}
-                  <Badge variant="secondary">{tool.category}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{tool.category}</Badge>
+                    <FavoriteButton
+                      size="sm"
+                      isFavorite={isFavorite(tool.id, 'tool')}
+                      onToggle={() => toggleFavorite(tool.id, 'tool')}
+                    />
+                  </div>
                 </div>
                 <CardTitle className="text-xl">{tool.name}</CardTitle>
                 <CardDescription>{tool.description}</CardDescription>

@@ -7,6 +7,9 @@ import { ArrowLeft, Wrench, ExternalLink, Calendar } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedItems from "@/components/RelatedItems";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ReviewSection } from "@/components/ReviewSection";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,7 +31,15 @@ const ToolDetail = () => {
   const [tool, setTool] = useState<Tool | null>(null);
   const [relatedTools, setRelatedTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const { toast } = useToast();
+  const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id, email: session.user.email } : null);
+    });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -60,7 +71,6 @@ const ToolDetail = () => {
       navigate("/tools");
     } else {
       setTool(data);
-      // Fetch related tools by category
       const { data: related } = await supabase
         .from("tools")
         .select("*")
@@ -160,11 +170,22 @@ const ToolDetail = () => {
                   Coming Soon
                 </Button>
               )}
+              <FavoriteButton
+                isFavorite={isFavorite(tool.id, 'tool')}
+                onToggle={() => toggleFavorite(tool.id, 'tool')}
+              />
             </div>
 
             <ShareButtons title={tool.name} />
           </CardContent>
         </Card>
+
+        <ReviewSection
+          itemId={tool.id}
+          itemType="tool"
+          userId={user?.id}
+          userEmail={user?.email}
+        />
 
         <RelatedItems 
           items={relatedTools} 
