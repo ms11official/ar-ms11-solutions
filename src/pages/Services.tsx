@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Layers, ExternalLink } from "lucide-react";
+import { Search, Layers, ExternalLink, Star, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import DashboardLayout from "@/components/DashboardLayout";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useItemRatings } from "@/hooks/useItemRatings";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,6 +31,7 @@ const ServicesPage = () => {
   const [user, setUser] = useState<{ id: string } | null>(null);
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites(user?.id);
+  const { ratings } = useItemRatings(services.map(s => s.id), "service");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -79,6 +81,23 @@ const ServicesPage = () => {
     }
   };
 
+  const getIconBgColor = (index: number) => {
+    const colors = [
+      'bg-blue-50 text-blue-600',
+      'bg-pink-50 text-pink-600',
+      'bg-indigo-50 text-indigo-600',
+      'bg-amber-50 text-amber-600',
+      'bg-emerald-50 text-emerald-600',
+      'bg-purple-50 text-purple-600',
+    ];
+    return colors[index % colors.length];
+  };
+
+  const getIconName = (index: number) => {
+    const icons = ['terminal', 'brush', 'search_check', 'auto_fix_high', 'campaign', 'palette'];
+    return icons[index % icons.length];
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -92,113 +111,74 @@ const ServicesPage = () => {
   return (
     <DashboardLayout>
       <div className="p-10">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black mb-2">Services</h1>
-          <p className="text-base text-muted-foreground">
-            Explore our marketing services
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold">{services.length}</p>
-                <p className="text-sm text-muted-foreground">Total Services</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold">{filteredServices.length}</p>
-                <p className="text-sm text-muted-foreground">Showing</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold">{services.filter(s => s.link).length}</p>
-                <p className="text-sm text-muted-foreground">With Links</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex items-end justify-between mb-8">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-extrabold">Featured Services</h1>
+            <p className="text-muted-foreground">Direct access to elite professional talent</p>
+          </div>
         </div>
 
         {/* Search */}
-        <div className="mb-6">
-          <div className="relative">
+        <div className="mb-8">
+          <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-card border-border"
             />
           </div>
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <Card 
-              key={service.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredServices.map((service, index) => (
+            <div
+              key={service.id}
+              className="bg-card border border-border rounded-2xl p-6 flex flex-col h-full hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => navigate(`/services/${service.id}`)}
             >
-              <CardHeader>
-                <div className="flex items-start justify-between mb-2">
+              <div className="flex justify-between items-start mb-6">
+                <div className={`w-14 h-14 rounded-xl ${getIconBgColor(index)} flex items-center justify-center`}>
                   {service.image_url ? (
-                    <img
-                      src={service.image_url}
-                      alt={service.name}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
+                    <img src={service.image_url} alt={service.name} className="w-8 h-8 object-cover rounded" />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Layers className="w-6 h-6 text-primary" />
-                    </div>
+                    <span className="material-symbols-outlined text-3xl">{getIconName(index)}</span>
                   )}
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{service.price}</Badge>
-                    <FavoriteButton
-                      size="sm"
-                      isFavorite={isFavorite(service.id, 'service')}
-                      onToggle={() => toggleFavorite(service.id, 'service')}
-                    />
-                  </div>
                 </div>
-                <CardTitle className="text-xl">{service.name}</CardTitle>
-                <CardDescription>{service.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {service.features && service.features.length > 0 && (
-                  <ul className="text-sm text-muted-foreground mb-4 space-y-1">
-                    {service.features.slice(0, 3).map((feature, idx) => (
-                      <li key={idx}>• {feature}</li>
-                    ))}
-                  </ul>
-                )}
-                <Button
-                  className="w-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVisit(service);
-                  }}
-                >
-                  {service.link ? (
-                    <>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Visit Service
-                    </>
-                  ) : (
-                    "View Details"
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 bg-secondary text-muted-foreground text-[10px] font-bold rounded-full uppercase tracking-tighter">
+                    Verified
+                  </span>
+                  <FavoriteButton
+                    size="sm"
+                    isFavorite={isFavorite(service.id, 'service')}
+                    onToggle={() => toggleFavorite(service.id, 'service')}
+                  />
+                </div>
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">{service.name}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4 flex-grow line-clamp-2">{service.description}</p>
+              
+              {/* Rating Display */}
+              {ratings[service.id]?.averageRating > 0 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    <span className="font-semibold text-sm">{ratings[service.id].averageRating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-muted-foreground text-sm">({ratings[service.id].reviewCount})</span>
+                </div>
+              )}
+              
+              <div className="pt-6 border-t border-border flex items-center justify-between">
+                <span className="text-lg font-black text-foreground">{service.price}</span>
+                <span className="text-accent text-sm font-bold flex items-center gap-1 group">
+                  View Details <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </div>
+            </div>
           ))}
         </div>
 
