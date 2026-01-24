@@ -18,6 +18,7 @@ import {
   BarChart3,
   Tags,
   Sparkles,
+  Heart,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -95,6 +96,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navItems = [
     { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/profile", icon: UserIcon, label: "My Profile" },
+    { path: "/favorites", icon: Heart, label: "My Favorites" },
     { path: "/services", icon: Layers, label: "Services" },
     { path: "/tools", icon: Wrench, label: "Tools" },
     { path: "/ai", icon: Sparkles, label: "AI Tools" },
@@ -120,8 +122,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <aside className={`${sidebarCollapsed ? 'w-20' : 'w-64'} border-r border-border bg-card flex flex-col p-4 transition-all duration-300`}>
         <div className="flex items-center justify-between px-3 py-4">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="AR-MS7 Logo" className="w-8 h-8 object-contain" />
-            {!sidebarCollapsed && <h2 className="text-xl font-bold">AR-MS7</h2>}
+            <img src={logo} alt="WavexFlow Logo" className="w-8 h-8 object-contain" />
+            {!sidebarCollapsed && <h2 className="text-xl font-bold">WavexFlow</h2>}
           </div>
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -153,8 +155,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 to={item.path}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
                   isActive(item.path)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-accent/10 text-accent"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 } ${sidebarCollapsed ? 'justify-center' : ''}`}
                 title={sidebarCollapsed ? item.label : undefined}
               >
@@ -178,8 +180,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     to={item.path}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
                       isActive(item.path)
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        ? "bg-accent/10 text-accent"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     } ${sidebarCollapsed ? 'justify-center' : ''}`}
                     title={sidebarCollapsed ? item.label : undefined}
                   >
@@ -194,7 +196,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
         <button
           onClick={handleLogout}
-          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground ${sidebarCollapsed ? 'justify-center' : ''}`}
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground hover:bg-secondary hover:text-foreground ${sidebarCollapsed ? 'justify-center' : ''}`}
           title={sidebarCollapsed ? "Logout" : undefined}
         >
           <LogOut className="w-5 h-5" />
@@ -208,7 +210,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <header className="sticky top-0 flex items-center justify-end border-b border-border bg-background/80 backdrop-blur-sm px-10 py-3 z-10">
           <div className="flex items-center gap-4">
             <Link to="/upgrade">
-              <Button size="default" className="font-bold">
+              <Button size="default" className="font-bold bg-accent hover:bg-accent/90">
                 Upgrade Plan
               </Button>
             </Link>
@@ -218,8 +220,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </Button>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <UserIcon className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                <UserIcon className="w-5 h-5 text-accent" />
               </div>
               <div className="flex flex-col text-left">
                 <h1 className="text-base font-medium">{userName}</h1>

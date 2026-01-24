@@ -35,6 +35,7 @@ import Blog from "./pages/Blog";
 import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import MyFavorites from "./pages/MyFavorites";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/upgrade" element={<UpgradePlan />} />
+            <Route path="/favorites" element={<MyFavorites />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/blog" element={<Blog />} />
