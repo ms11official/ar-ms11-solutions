@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Badge } from "@/components/ui/badge";
 
 const PrivacyPolicy = () => {
   return (
@@ -8,41 +9,42 @@ const PrivacyPolicy = () => {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/10 via-background to-background">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/50 to-background">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy Policy</h1>
-            <p className="text-muted-foreground">Last Updated: December 1, 2025</p>
+            <Badge className="mb-4 bg-primary/10 text-primary border-0">Legal</Badge>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Privacy Policy</h1>
+            <p className="text-muted-foreground">Last Updated: January 1, 2026</p>
           </div>
         </section>
 
         {/* Content */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto prose prose-slate dark:prose-invert">
+          <div className="max-w-4xl mx-auto">
             <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">1. Introduction</h2>
-                <p className="text-muted-foreground">
-                  Welcome to AR-MS11. We respect your privacy and are committed to protecting your personal data. 
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">1. Introduction</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Welcome to WavexFlow. We respect your privacy and are committed to protecting your personal data. 
                   This privacy policy will inform you about how we look after your personal data when you visit 
                   our website and tell you about your privacy rights and how the law protects you.
                 </p>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">2. Information We Collect</h2>
-                <p className="text-muted-foreground mb-4">We may collect, use, store and transfer different kinds of personal data about you:</p>
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">2. Information We Collect</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">We may collect, use, store and transfer different kinds of personal data about you:</p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  <li><strong>Identity Data:</strong> First name, last name, username or similar identifier</li>
-                  <li><strong>Contact Data:</strong> Email address, telephone numbers, and billing address</li>
-                  <li><strong>Technical Data:</strong> IP address, browser type and version, time zone setting, browser plug-in types and versions</li>
-                  <li><strong>Usage Data:</strong> Information about how you use our website and services</li>
-                  <li><strong>Marketing Data:</strong> Your preferences in receiving marketing from us and your communication preferences</li>
+                  <li><strong className="text-foreground">Identity Data:</strong> First name, last name, username or similar identifier</li>
+                  <li><strong className="text-foreground">Contact Data:</strong> Email address, telephone numbers, and billing address</li>
+                  <li><strong className="text-foreground">Technical Data:</strong> IP address, browser type and version, time zone setting</li>
+                  <li><strong className="text-foreground">Usage Data:</strong> Information about how you use our website and services</li>
+                  <li><strong className="text-foreground">Marketing Data:</strong> Your preferences in receiving marketing from us</li>
                 </ul>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">3. How We Use Your Information</h2>
-                <p className="text-muted-foreground mb-4">We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">3. How We Use Your Information</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li>To provide and maintain our service</li>
                   <li>To notify you about changes to our service</li>
@@ -53,9 +55,9 @@ const PrivacyPolicy = () => {
                 </ul>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">4. Data Security</h2>
-                <p className="text-muted-foreground">
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">4. Data Security</h2>
+                <p className="text-muted-foreground leading-relaxed">
                   We have put in place appropriate security measures to prevent your personal data from being 
                   accidentally lost, used or accessed in an unauthorized way, altered or disclosed. We limit 
                   access to your personal data to those employees, agents, contractors and other third parties 
@@ -63,18 +65,9 @@ const PrivacyPolicy = () => {
                 </p>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">5. Data Retention</h2>
-                <p className="text-muted-foreground">
-                  We will only retain your personal data for as long as necessary to fulfill the purposes we 
-                  collected it for, including for the purposes of satisfying any legal, accounting, or reporting 
-                  requirements.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">6. Your Legal Rights</h2>
-                <p className="text-muted-foreground mb-4">Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to:</p>
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">5. Your Legal Rights</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">Under certain circumstances, you have rights under data protection laws in relation to your personal data:</p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li>Request access to your personal data</li>
                   <li>Request correction of your personal data</li>
@@ -82,45 +75,18 @@ const PrivacyPolicy = () => {
                   <li>Object to processing of your personal data</li>
                   <li>Request restriction of processing your personal data</li>
                   <li>Request transfer of your personal data</li>
-                  <li>Right to withdraw consent</li>
                 </ul>
               </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">7. Cookies</h2>
-                <p className="text-muted-foreground">
-                  Our website uses cookies to distinguish you from other users of our website. This helps us to 
-                  provide you with a good experience when you browse our website and also allows us to improve 
-                  our site.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">8. Third-Party Links</h2>
-                <p className="text-muted-foreground">
-                  Our website may include links to third-party websites, plug-ins and applications. Clicking on 
-                  those links or enabling those connections may allow third parties to collect or share data about 
-                  you. We do not control these third-party websites and are not responsible for their privacy statements.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">9. Changes to This Privacy Policy</h2>
-                <p className="text-muted-foreground">
-                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting 
-                  the new Privacy Policy on this page and updating the "Last Updated" date.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">10. Contact Us</h2>
-                <p className="text-muted-foreground">
+              <div className="bg-card rounded-xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">6. Contact Us</h2>
+                <p className="text-muted-foreground leading-relaxed">
                   If you have any questions about this Privacy Policy, please contact us at:
                 </p>
                 <p className="text-muted-foreground mt-4">
-                  Email: privacy@ar-ms11.com<br />
-                  Phone: +1 (555) 123-4567<br />
-                  Address: 123 Analytics Street, San Francisco, CA 94105
+                  <span className="text-foreground font-medium">Email:</span> privacy@wavexflow.com<br />
+                  <span className="text-foreground font-medium">Phone:</span> +1 (555) 123-4567<br />
+                  <span className="text-foreground font-medium">Address:</span> 123 Innovation Street, San Francisco, CA 94105
                 </p>
               </div>
             </div>

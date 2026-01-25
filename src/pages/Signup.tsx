@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import authBg from "@/assets/auth-bg.jpg";
+import logo from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -84,37 +84,67 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-[#0f1419]">
-        <img 
-          src={authBg} 
-          alt="Marketing Analytics Dashboard" 
-          className="w-full h-full object-cover opacity-90"
-        />
-        <div className="absolute inset-0 flex flex-col justify-center px-16 text-white bg-gradient-to-r from-[#0f1419] via-[#0f1419]/80 to-transparent">
-          <h2 className="text-2xl font-bold mb-4">AR-MS11</h2>
+    <div className="min-h-screen flex bg-background">
+      {/* Left Side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-primary">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/90" />
+        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
+          <div className="flex items-center gap-3 mb-8">
+            <img src={logo} alt="WavexFlow" className="h-12 w-12" />
+            <span className="text-2xl font-bold">WavexFlow</span>
+          </div>
           <h1 className="text-5xl font-bold mb-6 leading-tight">
-            Unlock Your Marketing<br />Potential
+            Join WavexFlow
           </h1>
-          <p className="text-lg text-slate-300">
-            Gain insights and drive growth with our<br />
-            cutting-edge marketing analytics platform.
+          <p className="text-lg text-white/80 max-w-md">
+            Create an account to discover the best tools and services for your projects.
           </p>
+          <div className="mt-12 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-white/90">Access curated tools & services</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-white/90">Save favorites & track usage</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-white/90">Get personalized recommendations</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
+          {/* Mobile Logo */}
+          <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
+            <img src={logo} alt="WavexFlow" className="h-10 w-10" />
+            <span className="text-xl font-bold text-foreground">WavexFlow</span>
+          </div>
+
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Create an Account</h1>
-            <p className="text-muted-foreground">Start your journey with AR-MS11</p>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">Create Account</h1>
+            <p className="text-muted-foreground">Start your journey with WavexFlow</p>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName" className="text-foreground">Full Name</Label>
               <Input
                 id="fullName"
                 type="text"
@@ -122,11 +152,12 @@ const Signup = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
+                className="h-12 bg-background border-border"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email" className="text-foreground">Email Address</Label>
               <Input
                 id="email"
                 type="email"
@@ -134,11 +165,12 @@ const Signup = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-12 bg-background border-border"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-foreground">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -147,7 +179,7 @@ const Signup = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pr-10"
+                  className="pr-10 h-12 bg-background border-border"
                 />
                 <button
                   type="button"
@@ -160,7 +192,7 @@ const Signup = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-foreground">Confirm Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -169,7 +201,7 @@ const Signup = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="pr-10"
+                  className="pr-10 h-12 bg-background border-border"
                 />
                 <button
                   type="button"
@@ -189,10 +221,10 @@ const Signup = () => {
               />
               <label
                 htmlFor="terms"
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
               >
                 I agree to the{" "}
-                <Link to="#" className="text-primary hover:underline">
+                <Link to="/terms" className="text-primary hover:underline">
                   Terms and Conditions
                 </Link>
               </label>
@@ -200,16 +232,16 @@ const Signup = () => {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-base font-medium"
+              className="w-full h-12 text-base font-medium bg-primary hover:bg-primary/90"
               disabled={loading}
             >
-              {loading ? "Creating Account..." : "Sign Up"}
+              {loading ? "Creating Account..." : "Create Account"}
             </Button>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Already have an account? </span>
               <Link to="/login" className="text-primary hover:underline font-medium">
-                Log In
+                Sign In
               </Link>
             </div>
           </form>
