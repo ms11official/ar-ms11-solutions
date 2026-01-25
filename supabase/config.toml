@@ -1,1 +1,7 @@
 project_id = "eqlhlrwisrzrzcjgegvj"
+
+[functions.send-otp]
+verify_jwt = false
+
+[functions.notify-review-reply]
+verify_jwt = false
