@@ -18,6 +18,9 @@ import AdminToolsUpload from "./pages/AdminToolsUpload";
 import AdminServicesUpload from "./pages/AdminServicesUpload";
 import AdminCategories from "./pages/AdminCategories";
 import AdminAIUpload from "./pages/AdminAIUpload";
+import AdminNotesUpload from "./pages/AdminNotesUpload";
+import AdminPromptsUpload from "./pages/AdminPromptsUpload";
+import AdminMindmapsUpload from "./pages/AdminMindmapsUpload";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
@@ -59,6 +62,9 @@ const App = () => (
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/tools-upload" element={<AdminToolsUpload />} />
             <Route path="/admin/services-upload" element={<AdminServicesUpload />} />
+            <Route path="/admin/notes-upload" element={<AdminNotesUpload />} />
+            <Route path="/admin/prompts-upload" element={<AdminPromptsUpload />} />
+            <Route path="/admin/mindmaps-upload" element={<AdminMindmapsUpload />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services/:id" element={<ServiceDetail />} />
