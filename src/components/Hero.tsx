@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
+import NotesSection from "./NotesSection";
+import PromptsSection from "./PromptsSection";
+import MindmapsSection from "./MindmapsSection";
 
 interface Tool {
   id: string;
@@ -211,6 +214,15 @@ const Hero = () => {
           </div>
         </section>
       )}
+
+      {/* Notes Section */}
+      <NotesSection />
+
+      {/* Prompts Section */}
+      <PromptsSection />
+
+      {/* Mindmaps Section */}
+      <MindmapsSection />
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-6 lg:px-10 mb-20">
