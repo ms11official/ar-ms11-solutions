@@ -20,6 +20,13 @@ import {
   Sparkles,
   Heart,
   Network,
+  ShoppingBag,
+  Palette,
+  Loader,
+  Type,
+  Layout,
+  Crown,
+  Home,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -98,6 +105,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/profile", icon: UserIcon, label: "My Profile" },
     { path: "/favorites", icon: Heart, label: "My Favorites" },
+    { path: "/purchases", icon: ShoppingBag, label: "My Purchases" },
     { path: "/services", icon: Layers, label: "Services" },
     { path: "/tools", icon: Wrench, label: "Tools" },
     { path: "/ai", icon: Sparkles, label: "AI Tools" },
@@ -108,11 +116,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const adminNavItems = [
     { path: "/admin", icon: Shield, label: "Admin Dashboard" },
     { path: "/admin/users", icon: Users, label: "User Management" },
+    { path: "/admin/plans", icon: Crown, label: "Manage Plans" },
     { path: "/admin/categories", icon: Tags, label: "Categories" },
     { path: "/admin/ai-upload", icon: Sparkles, label: "AI Tools & Services" },
     { path: "/admin/notes-upload", icon: FileText, label: "Notes Upload" },
     { path: "/admin/prompts-upload", icon: Sparkles, label: "Prompts Upload" },
     { path: "/admin/mindmaps-upload", icon: Network, label: "Mindmaps Upload" },
+    { path: "/admin/uiux-upload", icon: Palette, label: "UI/UX Designs" },
+    { path: "/admin/animations-upload", icon: Loader, label: "Animations" },
+    { path: "/admin/fonts-upload", icon: Type, label: "Fonts" },
+    { path: "/admin/templates-upload", icon: Layout, label: "Templates" },
     { path: "/admin/logs", icon: FileText, label: "System Logs" },
     { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     { path: "/admin/tools-upload", icon: Wrench, label: "Tools Upload" },
@@ -211,7 +224,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Top Bar */}
-        <header className="sticky top-0 flex items-center justify-end border-b border-border bg-background/80 backdrop-blur-sm px-10 py-3 z-10">
+        <header className="sticky top-0 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-sm px-6 md:px-10 py-3 z-10">
+          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Home className="w-5 h-5" />
+            <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
+          </Link>
           <div className="flex items-center gap-4">
             <Link to="/upgrade">
               <Button size="default" className="font-bold bg-accent hover:bg-accent/90">
@@ -227,7 +244,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
                 <UserIcon className="w-5 h-5 text-accent" />
               </div>
-              <div className="flex flex-col text-left">
+              <div className="flex flex-col text-left hidden md:flex">
                 <h1 className="text-base font-medium">{userName}</h1>
                 <p className="text-sm text-muted-foreground">{userEmail}</p>
               </div>

@@ -8,7 +8,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedItems from "@/components/RelatedItems";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { ReviewSection } from "@/components/ReviewSection";
+import ReviewSection from "@/components/ReviewSection";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";

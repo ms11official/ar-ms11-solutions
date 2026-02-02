@@ -21,6 +21,11 @@ import AdminAIUpload from "./pages/AdminAIUpload";
 import AdminNotesUpload from "./pages/AdminNotesUpload";
 import AdminPromptsUpload from "./pages/AdminPromptsUpload";
 import AdminMindmapsUpload from "./pages/AdminMindmapsUpload";
+import AdminUIUXUpload from "./pages/AdminUIUXUpload";
+import AdminAnimationsUpload from "./pages/AdminAnimationsUpload";
+import AdminFontsUpload from "./pages/AdminFontsUpload";
+import AdminTemplatesUpload from "./pages/AdminTemplatesUpload";
+import AdminPlans from "./pages/AdminPlans";
 import MyProfile from "./pages/MyProfile";
 import ServicesPage from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
@@ -28,6 +33,13 @@ import ToolsPage from "./pages/ToolsPage";
 import ToolDetail from "./pages/ToolDetail";
 import AIPage from "./pages/AIPage";
 import AIDetail from "./pages/AIDetail";
+import NotesPage from "./pages/NotesPage";
+import NoteDetail from "./pages/NoteDetail";
+import PromptsPage from "./pages/PromptsPage";
+import PromptDetail from "./pages/PromptDetail";
+import MindmapsPage from "./pages/MindmapsPage";
+import MindmapDetail from "./pages/MindmapDetail";
+import MyPurchases from "./pages/MyPurchases";
 import ActivityHistory from "./pages/ActivityHistory";
 import SettingsPage from "./pages/SettingsPage";
 import Notifications from "./pages/Notifications";
@@ -65,6 +77,11 @@ const App = () => (
             <Route path="/admin/notes-upload" element={<AdminNotesUpload />} />
             <Route path="/admin/prompts-upload" element={<AdminPromptsUpload />} />
             <Route path="/admin/mindmaps-upload" element={<AdminMindmapsUpload />} />
+            <Route path="/admin/uiux-upload" element={<AdminUIUXUpload />} />
+            <Route path="/admin/animations-upload" element={<AdminAnimationsUpload />} />
+            <Route path="/admin/fonts-upload" element={<AdminFontsUpload />} />
+            <Route path="/admin/templates-upload" element={<AdminTemplatesUpload />} />
+            <Route path="/admin/plans" element={<AdminPlans />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services/:id" element={<ServiceDetail />} />
@@ -72,6 +89,13 @@ const App = () => (
             <Route path="/tools/:id" element={<ToolDetail />} />
             <Route path="/ai" element={<AIPage />} />
             <Route path="/ai/:id" element={<AIDetail />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/notes/:id" element={<NoteDetail />} />
+            <Route path="/prompts" element={<PromptsPage />} />
+            <Route path="/prompts/:id" element={<PromptDetail />} />
+            <Route path="/mindmaps" element={<MindmapsPage />} />
+            <Route path="/mindmaps/:id" element={<MindmapDetail />} />
+            <Route path="/purchases" element={<MyPurchases />} />
             <Route path="/activity" element={<ActivityHistory />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/notifications" element={<Notifications />} />

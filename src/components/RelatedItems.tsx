@@ -1,59 +1,123 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Wrench, Layers, Sparkles } from "lucide-react";
+import { Wrench, Layers, Sparkles, FileText, MessageSquare, Network } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RelatedItem {
   id: string;
   name: string;
   description: string | null;
-  category?: string;
+  category?: string | null;
   image_url: string | null;
 }
 
 interface RelatedItemsProps {
-  items: RelatedItem[];
-  type: "tool" | "service" | "ai";
+  items?: RelatedItem[];
+  type?: "tool" | "service" | "ai" | "notes" | "prompts" | "mindmaps";
   currentItemId: string;
+  // Auto-fetch mode props
+  itemType?: "tool" | "service" | "ai" | "notes" | "prompts" | "mindmaps";
+  category?: string;
 }
 
-const RelatedItems = ({ items, type, currentItemId }: RelatedItemsProps) => {
+const RelatedItems = ({ items: externalItems, type, currentItemId, itemType, category }: RelatedItemsProps) => {
   const navigate = useNavigate();
+  const [items, setItems] = useState<RelatedItem[]>(externalItems || []);
+
+  const effectiveType = type || itemType || "tool";
+
+  useEffect(() => {
+    // Auto-fetch if itemType and category are provided
+    if (itemType && category && !externalItems) {
+      fetchRelatedItems();
+    }
+  }, [itemType, category, currentItemId]);
+
+  const fetchRelatedItems = async () => {
+    const tableName = getTableName(itemType!);
+    
+    const { data } = await supabase
+      .from(tableName)
+      .select("id, name, description, category, image_url")
+      .eq("category", category)
+      .eq("status", "active")
+      .neq("id", currentItemId)
+      .limit(4);
+
+    if (data) setItems(data);
+  };
+
+  const getTableName = (t: string) => {
+    switch (t) {
+      case "tool": return "tools";
+      case "service": return "services";
+      case "notes": return "notes";
+      case "prompts": return "prompts";
+      case "mindmaps": return "mindmaps";
+      default: return "tools";
+    }
+  };
   
   const filteredItems = items.filter(item => item.id !== currentItemId).slice(0, 4);
 
   if (filteredItems.length === 0) return null;
 
   const getIcon = () => {
-    switch (type) {
+    switch (effectiveType) {
       case "tool":
         return Wrench;
       case "service":
         return Layers;
       case "ai":
         return Sparkles;
+      case "notes":
+        return FileText;
+      case "prompts":
+        return MessageSquare;
+      case "mindmaps":
+        return Network;
+      default:
+        return Wrench;
     }
   };
 
   const getPath = (id: string) => {
-    switch (type) {
+    switch (effectiveType) {
       case "tool":
         return `/tools/${id}`;
       case "service":
         return `/services/${id}`;
       case "ai":
         return `/ai/${id}`;
+      case "notes":
+        return `/notes/${id}`;
+      case "prompts":
+        return `/prompts/${id}`;
+      case "mindmaps":
+        return `/mindmaps/${id}`;
+      default:
+        return `/tools/${id}`;
     }
   };
 
   const getTitle = () => {
-    switch (type) {
+    switch (effectiveType) {
       case "tool":
         return "Related Tools";
       case "service":
         return "Related Services";
       case "ai":
         return "Related AI Tools";
+      case "notes":
+        return "Related Notes";
+      case "prompts":
+        return "Related Prompts";
+      case "mindmaps":
+        return "Related Mindmaps";
+      default:
+        return "Related Items";
     }
   };
 
