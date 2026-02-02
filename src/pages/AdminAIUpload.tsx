@@ -24,7 +24,7 @@ interface AIItem {
   type: "tool" | "service";
   created_at: string;
   features?: string[] | null;
-  price?: string;
+  price?: string | number;
 }
 
 interface Category {
@@ -264,7 +264,7 @@ const AdminAIUpload = () => {
     setItemTitle(item.name);
     setItemShortLine(item.description?.split(" | ")[0] || "");
     setItemKeyFeatures(item.features?.join(", ") || "");
-    setItemPrice(item.price?.split(" (was")[0] || "");
+    setItemPrice(typeof item.price === 'string' ? item.price.split(" (was")[0] : String(item.price || ""));
     setItemOldPrice("");
     setItemDiscount("");
     setItemTestUrl(item.link || "");

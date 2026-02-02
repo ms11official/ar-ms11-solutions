@@ -65,6 +65,90 @@ export type Database = {
         }
         Relationships: []
       }
+      fonts: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          name: string
+          preview_url: string | null
+          price: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          name: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          name?: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      loading_animations: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          name: string
+          preview_url: string | null
+          price: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          name: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          name?: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mindmaps: {
         Row: {
           category: string | null
@@ -546,6 +630,7 @@ export type Database = {
           image_url: string | null
           link: string | null
           name: string
+          price: number
           status: string
           updated_at: string
         }
@@ -559,6 +644,7 @@ export type Database = {
           image_url?: string | null
           link?: string | null
           name: string
+          price?: number
           status?: string
           updated_at?: string
         }
@@ -572,6 +658,49 @@ export type Database = {
           image_url?: string | null
           link?: string | null
           name?: string
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ui_ux_designs: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: number
           status?: string
           updated_at?: string
         }
@@ -655,6 +784,51 @@ export type Database = {
           two_factor_secret?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      website_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_url: string | null
+          id: string
+          image_url: string | null
+          name: string
+          preview_url: string | null
+          price: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          preview_url?: string | null
+          price?: number
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }

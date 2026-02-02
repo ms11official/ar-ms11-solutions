@@ -20,12 +20,12 @@ interface Review {
 
 interface ReviewSectionProps {
   itemId: string;
-  itemType: 'tool' | 'service' | 'ai';
+  itemType: 'tool' | 'service' | 'ai' | 'notes' | 'prompts' | 'mindmaps';
   userId?: string;
   userEmail?: string;
 }
 
-export const ReviewSection = ({ itemId, itemType, userId, userEmail }: ReviewSectionProps) => {
+export default function ReviewSection({ itemId, itemType, userId, userEmail }: ReviewSectionProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
@@ -296,4 +296,4 @@ export const ReviewSection = ({ itemId, itemType, userId, userEmail }: ReviewSec
       </CardContent>
     </Card>
   );
-};
+}
