@@ -12,10 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, Lock, User, CreditCard, Palette } from "lucide-react";
+import { Bell, Lock, User, CreditCard, Palette, Languages } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 const SettingsPage = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -23,6 +24,7 @@ const SettingsPage = () => {
   const [marketingEmails, setMarketingEmails] = useState(true);
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
 
   const handleSaveSettings = () => {
     toast({
@@ -31,37 +33,49 @@ const SettingsPage = () => {
     });
   };
 
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value as Language);
+    toast({
+      title: t("settings.title"),
+      description: `Language changed to ${value === "en" ? "English" : value === "hi" ? "हिंदी" : "Hinglish"}`,
+    });
+  };
+
   return (
     <DashboardLayout>
-      <div className="p-10">
+      <div className="p-6 md:p-10">
         <div className="mb-8">
-          <h1 className="text-4xl font-black mb-2">Settings</h1>
+          <h1 className="text-3xl md:text-4xl font-black mb-2">{t("settings.title")}</h1>
           <p className="text-base text-muted-foreground">
             Manage your account settings and preferences
           </p>
         </div>
 
         <Tabs defaultValue="account" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 lg:w-auto gap-1">
             <TabsTrigger value="account" className="gap-2">
               <User className="w-4 h-4" />
-              <span className="hidden sm:inline">Account</span>
+              <span className="hidden sm:inline">{t("settings.account")}</span>
             </TabsTrigger>
             <TabsTrigger value="security" className="gap-2">
               <Lock className="w-4 h-4" />
-              <span className="hidden sm:inline">Security</span>
+              <span className="hidden sm:inline">{t("settings.security")}</span>
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2">
               <Bell className="w-4 h-4" />
-              <span className="hidden sm:inline">Notifications</span>
+              <span className="hidden sm:inline">{t("settings.notifications")}</span>
             </TabsTrigger>
             <TabsTrigger value="billing" className="gap-2">
               <CreditCard className="w-4 h-4" />
-              <span className="hidden sm:inline">Billing</span>
+              <span className="hidden sm:inline">{t("settings.billing")}</span>
             </TabsTrigger>
             <TabsTrigger value="appearance" className="gap-2">
               <Palette className="w-4 h-4" />
-              <span className="hidden sm:inline">Appearance</span>
+              <span className="hidden sm:inline">{t("settings.appearance")}</span>
+            </TabsTrigger>
+            <TabsTrigger value="language" className="gap-2">
+              <Languages className="w-4 h-4" />
+              <span className="hidden sm:inline">{t("settings.language")}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -93,6 +107,7 @@ const SettingsPage = () => {
                       <SelectItem value="est">Eastern Time</SelectItem>
                       <SelectItem value="pst">Pacific Time</SelectItem>
                       <SelectItem value="cst">Central Time</SelectItem>
+                      <SelectItem value="ist">India Standard Time</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,7 +255,7 @@ const SettingsPage = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="font-medium">$49.00</p>
+                        <p className="font-medium">₹499</p>
                         <Button variant="ghost" size="sm">
                           Download
                         </Button>
@@ -255,7 +270,7 @@ const SettingsPage = () => {
           <TabsContent value="appearance" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Theme</CardTitle>
+                <CardTitle>{t("settings.theme")}</CardTitle>
                 <CardDescription>Choose your preferred theme</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -271,6 +286,70 @@ const SettingsPage = () => {
                       <SelectItem value="system">System</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="language" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Languages className="w-5 h-5" />
+                  {t("settings.language")}
+                </CardTitle>
+                <CardDescription>{t("settings.languageDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <Label>{t("settings.language")}</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Card
+                      className={`cursor-pointer transition-all hover:shadow-md ${
+                        language === "en" ? "border-2 border-accent bg-accent/5" : ""
+                      }`}
+                      onClick={() => handleLanguageChange("en")}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-3xl mb-2">🇬🇧</div>
+                        <p className="font-bold">English</p>
+                        <p className="text-sm text-muted-foreground">International</p>
+                      </CardContent>
+                    </Card>
+                    <Card
+                      className={`cursor-pointer transition-all hover:shadow-md ${
+                        language === "hi" ? "border-2 border-accent bg-accent/5" : ""
+                      }`}
+                      onClick={() => handleLanguageChange("hi")}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-3xl mb-2">🇮🇳</div>
+                        <p className="font-bold">हिंदी</p>
+                        <p className="text-sm text-muted-foreground">Hindi</p>
+                      </CardContent>
+                    </Card>
+                    <Card
+                      className={`cursor-pointer transition-all hover:shadow-md ${
+                        language === "hinglish" ? "border-2 border-accent bg-accent/5" : ""
+                      }`}
+                      onClick={() => handleLanguageChange("hinglish")}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="text-3xl mb-2">🔀</div>
+                        <p className="font-bold">Hinglish</p>
+                        <p className="text-sm text-muted-foreground">Hindi + English</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm font-medium mb-2">Preview:</p>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p>• {t("nav.home")} - {t("nav.dashboard")}</p>
+                    <p>• {t("common.buyNow")} - {t("common.viewDetails")}</p>
+                    <p>• {t("section.featuredTools")}</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

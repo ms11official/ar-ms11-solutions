@@ -6,6 +6,12 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import NotesSection from "./NotesSection";
 import PromptsSection from "./PromptsSection";
 import MindmapsSection from "./MindmapsSection";
+import UIUXSection from "./UIUXSection";
+import AnimationsSection from "./AnimationsSection";
+import FontsSection from "./FontsSection";
+import TemplatesSection from "./TemplatesSection";
+import SponsoredSection from "./SponsoredSection";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Tool {
   id: string;
@@ -28,6 +34,7 @@ const Hero = () => {
   const [tools, setTools] = useState<Tool[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,24 +86,26 @@ const Hero = () => {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-foreground/10 backdrop-blur-md rounded-full border border-primary-foreground/10">
                   <span className="flex w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                  <span className="text-primary-foreground text-[11px] font-bold uppercase tracking-widest">Digital Marketplace</span>
+                  <span className="text-primary-foreground text-[11px] font-bold uppercase tracking-widest">{t("hero.badge")}</span>
                 </div>
                 <h1 className="text-4xl lg:text-6xl font-extrabold text-primary-foreground leading-tight tracking-tight">
-                  Scale your <span className="text-accent">vision</span> with elite digital tools.
+                  {t("hero.title").split("vision").map((part, i) => 
+                    i === 0 ? part : <span key={i}><span className="text-accent">vision</span>{part}</span>
+                  )}
                 </h1>
                 <p className="text-primary-foreground/70 text-lg max-w-lg leading-relaxed">
-                  A curated marketplace connecting ambitious builders with high-performance assets and the world's top digital professionals.
+                  {t("hero.subtitle")}
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
                 <Link to="/tools">
                   <Button className="px-8 py-6 bg-accent text-accent-foreground font-bold rounded-xl hover:bg-accent/90 shadow-xl shadow-accent/20 flex items-center gap-2">
-                    Browse Tools <ArrowRight className="w-4 h-4" />
+                    {t("hero.browseTools")} <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
                 <Link to="/services">
                   <Button variant="outline" className="px-8 py-6 bg-primary-foreground/5 hover:bg-primary-foreground/10 text-primary-foreground font-bold rounded-xl border border-primary-foreground/10">
-                    Explore Services
+                    {t("hero.exploreServices")}
                   </Button>
                 </Link>
               </div>
@@ -117,7 +126,7 @@ const Hero = () => {
       {categories.length > 0 && (
         <section className="max-w-7xl mx-auto px-6 lg:px-10 mb-20">
           <div className="flex items-center gap-4 overflow-x-auto hide-scrollbar">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mr-4">Trending</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mr-4">{t("section.trending")}</p>
             {categories.map((category) => (
               <Link key={category} to={`/tools?category=${category}`}>
                 <button className="px-5 py-2.5 bg-card border border-border rounded-lg text-sm font-semibold hover:border-accent hover:text-accent transition-all whitespace-nowrap">
@@ -134,11 +143,11 @@ const Hero = () => {
         <section id="tools" className="max-w-7xl mx-auto px-6 lg:px-10 mb-24">
           <div className="flex items-end justify-between mb-10">
             <div className="space-y-2">
-              <h2 className="text-3xl font-extrabold text-foreground">Featured Digital Tools</h2>
-              <p className="text-muted-foreground">Verified assets for high-growth projects</p>
+              <h2 className="text-3xl font-extrabold text-foreground">{t("section.featuredTools")}</h2>
+              <p className="text-muted-foreground">{t("section.featuredToolsDesc")}</p>
             </div>
             <Link to="/tools" className="flex items-center gap-2 text-accent font-bold text-sm hover:underline">
-              Browse Marketplace <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+              {t("common.browseMarketplace")} <span className="material-symbols-outlined text-[18px]">open_in_new</span>
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -160,9 +169,9 @@ const Hero = () => {
                   <h3 className="text-xl font-bold text-foreground mb-2">{tool.name}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-8 flex-grow line-clamp-2">{tool.description}</p>
                   <div className="pt-6 border-t border-border flex items-center justify-between">
-                    <span className="text-lg font-black text-foreground">Free<span className="text-sm font-normal text-muted-foreground"> Start</span></span>
+                    <span className="text-lg font-black text-foreground">{t("common.free")}<span className="text-sm font-normal text-muted-foreground"> Start</span></span>
                     <span className="text-accent text-sm font-bold flex items-center gap-1 group">
-                      View Details <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      {t("common.viewDetails")} <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>
@@ -177,11 +186,11 @@ const Hero = () => {
         <section id="services" className="max-w-7xl mx-auto px-6 lg:px-10 mb-24">
           <div className="flex items-end justify-between mb-10">
             <div className="space-y-2">
-              <h2 className="text-3xl font-extrabold text-foreground">Featured Services</h2>
-              <p className="text-muted-foreground">Direct access to elite professional talent</p>
+              <h2 className="text-3xl font-extrabold text-foreground">{t("section.featuredServices")}</h2>
+              <p className="text-muted-foreground">{t("section.featuredServicesDesc")}</p>
             </div>
             <Link to="/services" className="flex items-center gap-2 text-accent font-bold text-sm hover:underline">
-              Explore Services <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+              {t("hero.exploreServices")} <span className="material-symbols-outlined text-[18px]">open_in_new</span>
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -205,7 +214,7 @@ const Hero = () => {
                   <div className="pt-6 border-t border-border flex items-center justify-between">
                     <span className="text-lg font-black text-foreground">{service.price}</span>
                     <span className="text-accent text-sm font-bold flex items-center gap-1 group">
-                      View Details <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      {t("common.viewDetails")} <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>
@@ -215,6 +224,9 @@ const Hero = () => {
         </section>
       )}
 
+      {/* Sponsored Section */}
+      <SponsoredSection />
+
       {/* Notes Section */}
       <NotesSection />
 
@@ -223,6 +235,18 @@ const Hero = () => {
 
       {/* Mindmaps Section */}
       <MindmapsSection />
+
+      {/* UI/UX Section */}
+      <UIUXSection />
+
+      {/* Animations Section */}
+      <AnimationsSection />
+
+      {/* Fonts Section */}
+      <FontsSection />
+
+      {/* Templates Section */}
+      <TemplatesSection />
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-6 lg:px-10 mb-20">
