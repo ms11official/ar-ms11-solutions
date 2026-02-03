@@ -27,6 +27,7 @@ import {
   Layout,
   Crown,
   Home,
+  Star,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -117,6 +118,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/admin", icon: Shield, label: "Admin Dashboard" },
     { path: "/admin/users", icon: Users, label: "User Management" },
     { path: "/admin/plans", icon: Crown, label: "Manage Plans" },
+    { path: "/admin/sponsored", icon: Star, label: "Sponsored Items" },
     { path: "/admin/categories", icon: Tags, label: "Categories" },
     { path: "/admin/ai-upload", icon: Sparkles, label: "AI Tools & Services" },
     { path: "/admin/notes-upload", icon: FileText, label: "Notes Upload" },
