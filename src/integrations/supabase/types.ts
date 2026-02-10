@@ -107,6 +107,75 @@ export type Database = {
         }
         Relationships: []
       }
+      freelancers: {
+        Row: {
+          availability: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          experience_years: number | null
+          fixed_price: string | null
+          hourly_rate: number | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          portfolio_url: string | null
+          pricing_type: string
+          rating: number | null
+          skills: string[] | null
+          status: string
+          title: string
+          total_projects: number | null
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          category: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          experience_years?: number | null
+          fixed_price?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          portfolio_url?: string | null
+          pricing_type?: string
+          rating?: number | null
+          skills?: string[] | null
+          status?: string
+          title: string
+          total_projects?: number | null
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          experience_years?: number | null
+          fixed_price?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          portfolio_url?: string | null
+          pricing_type?: string
+          rating?: number | null
+          skills?: string[] | null
+          status?: string
+          title?: string
+          total_projects?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       loading_animations: {
         Row: {
           category: string | null

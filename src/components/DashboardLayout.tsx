@@ -110,6 +110,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/services", icon: Layers, label: "Services" },
     { path: "/tools", icon: Wrench, label: "Tools" },
     { path: "/ai", icon: Sparkles, label: "AI Tools" },
+    { path: "/freelancers", icon: Users, label: "Freelancers" },
     { path: "/activity", icon: History, label: "Activity History" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
@@ -132,6 +133,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     { path: "/admin/tools-upload", icon: Wrench, label: "Tools Upload" },
     { path: "/admin/services-upload", icon: Layers, label: "Services Upload" },
+    { path: "/admin/freelancers-upload", icon: Users, label: "Freelancers" },
   ];
 
   return (

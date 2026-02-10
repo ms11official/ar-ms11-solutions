@@ -52,6 +52,8 @@ const translations: Translations = {
   "section.templatesDesc": { en: "Ready-to-deploy website templates", hi: "रेडी-टू-डिप्लॉय वेबसाइट टेम्पलेट्स", hinglish: "Ready-to-deploy website templates" },
   "section.sponsored": { en: "Sponsored & Featured", hi: "स्पॉन्सर्ड और फीचर्ड", hinglish: "Sponsored & Featured" },
   "section.sponsoredDesc": { en: "Premium tools handpicked for you", hi: "आपके लिए चुने गए प्रीमियम टूल्स", hinglish: "Aapke liye handpicked premium tools" },
+  "section.freelancers": { en: "Top Freelancers", hi: "टॉप फ्रीलांसर्स", hinglish: "Top Freelancers" },
+  "section.freelancersDesc": { en: "Hire elite freelance professionals for your projects", hi: "अपने प्रोजेक्ट्स के लिए एलीट फ्रीलांस प्रोफेशनल्स को हायर करें", hinglish: "Apne projects ke liye elite freelance professionals hire karo" },
 
   // Common
   "common.viewAll": { en: "View All", hi: "सभी देखें", hinglish: "Sab Dekho" },

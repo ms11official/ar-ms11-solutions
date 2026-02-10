@@ -20,7 +20,7 @@ interface Review {
 
 interface ReviewSectionProps {
   itemId: string;
-  itemType: 'tool' | 'service' | 'ai' | 'notes' | 'prompts' | 'mindmaps';
+  itemType: 'tool' | 'service' | 'ai' | 'notes' | 'prompts' | 'mindmaps' | 'freelancer';
   userId?: string;
   userEmail?: string;
 }

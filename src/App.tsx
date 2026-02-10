@@ -53,6 +53,9 @@ import ContactUs from "./pages/ContactUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import MyFavorites from "./pages/MyFavorites";
+import FreelancersPage from "./pages/FreelancersPage";
+import FreelancerDetail from "./pages/FreelancerDetail";
+import AdminFreelancersUpload from "./pages/AdminFreelancersUpload";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -86,6 +89,7 @@ const App = () => (
               <Route path="/admin/templates-upload" element={<AdminTemplatesUpload />} />
               <Route path="/admin/plans" element={<AdminPlans />} />
               <Route path="/admin/sponsored" element={<AdminSponsored />} />
+              <Route path="/admin/freelancers-upload" element={<AdminFreelancersUpload />} />
               <Route path="/profile" element={<MyProfile />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/services/:id" element={<ServiceDetail />} />
@@ -105,6 +109,8 @@ const App = () => (
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/upgrade" element={<UpgradePlan />} />
               <Route path="/favorites" element={<MyFavorites />} />
+              <Route path="/freelancers" element={<FreelancersPage />} />
+              <Route path="/freelancers/:id" element={<FreelancerDetail />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/blog" element={<Blog />} />

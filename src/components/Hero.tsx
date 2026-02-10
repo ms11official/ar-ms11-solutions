@@ -10,6 +10,7 @@ import UIUXSection from "./UIUXSection";
 import AnimationsSection from "./AnimationsSection";
 import FontsSection from "./FontsSection";
 import TemplatesSection from "./TemplatesSection";
+import FreelancersSection from "./FreelancersSection";
 import SponsoredSection from "./SponsoredSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -247,6 +248,9 @@ const Hero = () => {
 
       {/* Templates Section */}
       <TemplatesSection />
+
+      {/* Freelancers Section */}
+      <FreelancersSection />
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-6 lg:px-10 mb-20">
