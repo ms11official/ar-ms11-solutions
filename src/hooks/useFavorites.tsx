@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export type ItemType = 'tool' | 'service' | 'ai';
+export type ItemType = 'tool' | 'service' | 'ai' | 'notes' | 'prompts' | 'mindmaps' | 'freelancer';
 
 interface Favorite {
   id: string;
